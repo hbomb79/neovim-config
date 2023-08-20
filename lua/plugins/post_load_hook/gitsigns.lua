@@ -1,0 +1,4 @@
+--require "gitsigns".setup {
+--    keymaps = {}-
+--}
+

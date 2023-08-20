@@ -1,0 +1,92 @@
+HeaderBegin:
+" Header
+"  Please edit this text.
+HeaderEnd:
+background: dark
+
+#  CTRL-l  redraw highlights
+#  CTRL-s  write colorscheme to file
+#----------------------------------------
+# name          fg   bg   sp/attr
+dark.Normal    249  235
+light.Normal   249  252
+Comment        240    -  italic
+Constant       186    -
+String         144    -
+Character      174    -
+Number         151    -
+Boolean        174    -
+Float          131    -
+Identifier      67    -
+Function       186    -
+Statement       67    -
+Conditional    109    -
+Operator       109    -
+Exception       67    -
+PreProc        186    -
+Type           139    -
+StorageClass   110    -
+Special         67    -  italic
+Underlined     110    -  underline
+Ignore           0    -
+Error          203    -  bold,reverse
+Todo           139    -  bold,italic
+ColorColumn      -  236
+DiffAdd        238  144
+DiffChange     186    -  underline
+DiffDelete     238  131
+DiffText       238  186
+ErrorMsg       203    -
+Folded         241    -
+FoldColumn       -    -
+IncSearch        -  241
+LineNr         243    -
+ModeMsg          -    -  bold
+MoreMsg        121    -  bold
+NonText        238    -
+Pmenu          254  239
+PmenuSel       238   67
+PmenuSbar        -  238
+PmenuThumb       -  254
+Search           -  241
+SpellBad       203    -  underline
+SpellCap       180    -
+SpellLocal     180    -
+SpellRare      180    -
+StatusLine     254  236
+StatusLineNC   241    -
+TabLine        241    -
+TabLineFill      -  236
+TabLineSel     254    -
+Title          110    -
+Visual           -  238
+VisualNOS      238    -
+WarningMsg     186    -
+WildMenu       238   67
+CursorColumn     -  236
+CursorLine       -  236
+CursorLineNr   254    -  bold
+MatchParen       -    -  underline
+SignColumn       -  235
+SpecialKey     238    -
+VertSplit      240    -
+
+FooterBegin:
+" Created with vim-colorscheme-edit v1.0.0
+"   https://github.com/nokobear/vim-colorscheme-edit
+FooterEnd:
+
+# NOTE:
+#----------------------------------------
+# attr:
+#   bold inverse italic nocombine reverse standout
+#   strikethrough undercurl underline
+#
+# sp:
+#   sp defines attr-colors such as undercurl or strikethrough.
+#   It is available only in GUI mode.
+# use as follows
+# name           fg    bg  sp    attr
+# DiffDelete     196   -   124   strikethrough
+# DiffAdd        231   -   231   bold,italic,undercurl
+#----------------------------------------

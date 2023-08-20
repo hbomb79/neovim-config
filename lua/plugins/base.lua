@@ -20,6 +20,7 @@ Plug "freddiehaddad/feline.nvim"
 -- Git integration
 Plug "tpope/vim-fugitive"
 Plug "tpope/vim-rhubarb"
+Plug "airblade/vim-gitgutter"
 
 -- Telescope stuff
 Plug "nvim-lua/popup.nvim"

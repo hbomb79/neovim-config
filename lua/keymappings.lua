@@ -13,11 +13,10 @@ vim.g.mapleader = ' '
 vim.api.nvim_set_keymap("v", "<leader>/", ":Commentary<CR>", {noremap = true, silent = true})
 
 -- Configure <leader>-less keymaps
+local hop = require('hop')
+local directions = require('hop.hint').HintDirection
 whichkey.register({
-    ["<TAB>"] = {"<cmd>BufferLineCycleNext<cr>", ""},
-    ["<S-TAB>"] = {"<cmd>BufferLineCyclePrev<cr>", ""},
     ["<S-x>"] = {"<cmd>bdelete<cr>", ""},
-
     K = {"<cmd>lua vim.lsp.buf.hover()<CR>", "LSP Hover"},
     g = {
         name = "+LSP",
@@ -26,15 +25,34 @@ whichkey.register({
         r = {"<cmd>lua vim.lsp.buf.references()<CR>", "List References"},
         i = {"<cmd>lua vim.lsp.buf.implementation()<CR>", "Jump to Implementation"},
     },
+    h = {
+        name = "Hop",
+        h = {
+            function() hop.hint_words() end,
+            "Global Word"
+        },
+        H = {
+            function() hop.hint_words {current_line_only = true} end,
+            "Line Word"
+        },
+        c = {
+            function() hop.hint_char1({ direction = directions.AFTER_CURSOR, current_line_only = false }) end,
+            "Global Char"
+        },
+        C = {
+            function() hop.hint_char1({ direction = directions.AFTER_CURSOR, current_line_only = true }) end,
+            "Line Char"
+        }
+    }
 })
 
 -- Configure <leader> keymaps (default leader is space)
 whichkey.register({
+    ["<leader>"] = {"<cmd>nohlsearch<cr>", "No Highlight"},
     ["/"] = {"<cmd>Commentary<cr>", "Comment"},
     ["c"] = {"<cmd>bd<cr>", "Close Buffer"},
-    ["e"] = {"<cmd>NvimTreeToggle<cr>", "Open File Tree"},
+    ["e"] = {"<cmd>Neotree<cr>", "Open File Tree"},
     ["f"] = {"<cmd>Telescope find_files<cr>", "Find File"},
-    ["h"] = {"<cmd>nohlsearch<cr>", "No Highlight"},
     [";"] = {"<cmd>Dashboard<cr>", "Open Dashboard"},
     d = {
         name = "+Diagnostics",
@@ -104,5 +122,30 @@ whichkey.register({
         s = {"<cmd>SessionSave<cr>", "Save Session"},
         l = {"<cmd>SessionLoad<cr>", "Load Session"}
     },
+    p = {
+        name = "harpoon",
+        a = { "<cmd>lua require('harpoon.mark').add_file()<cr>", "add file" },
+        r = { "<cmd>lua require('harpoon.mark').rm_file()<cr>", "remove file" },
+        m = { "<cmd>lua require('harpoon.ui').toggle_quick_menu()<cr>", "harpoon menu" },
+        n = { "<cmd>lua require('harpoon.ui').nav_next()<cr>", "next file" },
+        p = { "<cmd>lua require('harpoon.ui').nav_prev()<cr>", "previous file" },
+        ["1"] = { "<cmd> lua require('harpoon.ui').nav_file(1)<cr>", "file 1" },
+        ["2"] = { "<cmd> lua require('harpoon.ui').nav_file(2)<cr>", "file 2" },
+        ["3"] = { "<cmd> lua require('harpoon.ui').nav_file(3)<cr>", "file 3" },
+    },
+    H = {
+        name = "help/debug/conceal",
+        c = {
+            name = "conceal",
+            h = { ":set conceallevel=1<cr>", "hide/conceal" },
+            s = { ":set conceallevel=0<cr>", "show/unconceal" },
+        },
+        t = {
+            name = "treesitter",
+            t = { vim.treesitter.inspect_tree, "show tree" },
+            c = { ":=vim.treesitter.get_captures_at_cursor()<cr>", "show capture" },
+            n = { ":=vim.treesitter.get_node():type()<cr>", "show node" },
+        },
+    }
 }, { prefix = "<leader>" })
 

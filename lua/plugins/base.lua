@@ -9,12 +9,13 @@ Plug "rafi/awesome-vim-colorschemes"
 Plug "lewis6991/gitsigns.nvim"
 Plug "f-person/git-blame.nvim"
 Plug "tpope/vim-commentary"
-Plug "kyazdani42/nvim-web-devicons"
+Plug "nvim-tree/nvim-web-devicons"
 
 Plug "ChristianChiarulli/dashboard-nvim"
 Plug "folke/which-key.nvim"
-Plug "famiu/feline.nvim"
 Plug "rcarriga/nvim-notify"
+Plug "freddiehaddad/feline.nvim"
+
 
 -- Git integration
 Plug "tpope/vim-fugitive"

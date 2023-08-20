@@ -10,3 +10,4 @@ Plug 'hrsh7th/nvim-cmp'
 Plug 'L3MON4D3/LuaSnip'
 Plug 'saadparwaiz1/cmp_luasnip'
 Plug "tami5/lspsaga.nvim"
+Plug 'scalameta/nvim-metals'

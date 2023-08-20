@@ -155,9 +155,23 @@ local lsp = require 'feline.providers.lsp'
 local vi_mode_utils = require 'feline.providers.vi_mode'
 local cursor = require 'feline.providers.cursor'
 
--- LuaFormatter off
 
 local comps = {
+    metals_status = {
+        provider = function()
+            local metals_status = vim.g['metals_status']
+            if type(metals_status) == 'string' and #metals_status > 0 then
+                return 'Metals: ' .. metals_status
+            end
+
+            return 'Metals Idle'
+        end,
+        hl = {
+            style = 'italic',
+            fg = 'grey'
+        },
+        enabled = true
+    },
     vi_mode = {
         left = {
             provider = function()
@@ -356,6 +370,7 @@ local components = {
         },
         {}, -- middle
         { -- right
+            comps.metals_status,
             comps.git.add,
             comps.git.change,
             comps.git.remove,

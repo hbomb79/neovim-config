@@ -1,7 +1,8 @@
 -- A list of LSP configurations we want to setup, 
 local lsp_servers = {
     "lua",
-    "go"
+    "go",
+    "scala"
 }
 
 vim.fn.sign_define(

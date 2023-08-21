@@ -231,7 +231,7 @@ local comps = {
     },
     position = {
         provider = function()
-            pos = cursor:position {}
+            local pos = cursor:position {}
             return ' ' .. pos .. ' '
         end,
         left_sep = ' ',
@@ -257,7 +257,7 @@ local comps = {
         err = {
             provider = 'diagnostic_errors',
             enabled = function()
-                return lsp.diagnostics_exist('Error')
+                return lsp.diagnostics_exist(vim.diagnostic.severity.ERROR)
             end,
             hl = {
                 fg = colors.red
@@ -266,7 +266,7 @@ local comps = {
         warn = {
             provider = 'diagnostic_warnings',
             enabled = function()
-                return lsp.diagnostics_exist('Warning')
+                return lsp.diagnostics_exist(vim.diagnostic.severity.WARN)
             end,
             hl = {
                 fg = colors.yellow
@@ -275,7 +275,7 @@ local comps = {
         hint = {
             provider = 'diagnostic_hints',
             enabled = function()
-                return lsp.diagnostics_exist('Hint')
+                return lsp.diagnostics_exist(vim.diagnostic.severity.HINT)
             end,
             hl = {
                 fg = colors.cyan
@@ -284,7 +284,7 @@ local comps = {
         info = {
             provider = 'diagnostic_info',
             enabled = function()
-                return lsp.diagnostics_exist('Information')
+                return lsp.diagnostics_exist(vim.diagnostic.severity.INFO)
             end,
             hl = {
                 fg = colors.blue
@@ -295,6 +295,7 @@ local comps = {
         name = {
             provider = 'lsp_client_names',
             left_sep = ' ',
+            right_sep = ' ',
             icon = ' ',
             hl = {
                 fg = colors.yellow
@@ -356,16 +357,17 @@ local components = {
         { -- left
             comps.vi_mode.left,
             comps.git.branch,
-            comps.file.info,
-            comps.file.type,
             comps.lsp.name,
             comps.diagnos.err,
             comps.diagnos.warn,
             comps.diagnos.hint,
             comps.diagnos.info,
         },
-        {}, -- middle
-        {   -- right
+        {
+            comps.file.info,
+            comps.file.type,
+        }, -- middle
+        {  -- right
             comps.metals_status,
             comps.git.add,
             comps.git.change,

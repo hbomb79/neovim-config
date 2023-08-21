@@ -1,5 +1,5 @@
 return {
-    "lewis6991/gitsigns.nvim",
+    { "lewis6991/gitsigns.nvim", opts = {} },
     "f-person/git-blame.nvim",
     {
         "tpope/vim-fugitive",

@@ -1,10 +1,6 @@
 return {
     "tpope/vim-sensible",
     {
-        "rcarriga/nvim-notify",
-        lazy = true
-    },
-    {
         'glepnir/dashboard-nvim',
         event = 'VimEnter',
         opts = {},

@@ -17,12 +17,11 @@ return {
         }
     },
     {
-        'mrded/nvim-lsp-notify',
-        config = function()
-            require('lsp-notify').setup({
-                notify = require('notify'),
-            })
-        end,
-        dependencies = { 'nvim-notify' },
+        "j-hui/fidget.nvim",
+        tag = "legacy",
+        event = "LspAttach",
+        opts = {
+            -- options
+        },
     }
 }

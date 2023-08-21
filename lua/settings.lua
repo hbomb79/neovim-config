@@ -30,6 +30,8 @@ set {
     "incsearch",
     "nocompatible",
     "completeopt=menu,menuone,noselect",
+    "laststatus=3",
+    "winbar=%=%m\\ %f"
 }
 
 -- Buffer/general options go here

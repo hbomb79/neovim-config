@@ -3,10 +3,6 @@ vim.api.nvim_create_autocmd("BufWritePre", {
     callback = function() vim.lsp.buf.format() end,
 })
 
-vim.api.nvim_create_autocmd("BufWritePre", {
-    callback = function() vim.lsp.buf.format() end,
-})
-
 vim.fn.sign_define(
     "LspDiagnosticsSignError",
     { texthl = "LspDiagnosticsSignError", text = "", numhl = "LspDiagnosticsSignError" }

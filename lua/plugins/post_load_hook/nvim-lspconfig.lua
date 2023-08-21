@@ -1,4 +1,4 @@
--- A list of LSP configurations we want to setup, 
+-- A list of LSP configurations we want to setup,
 local lsp_servers = {
     "lua",
     "go",
@@ -7,30 +7,30 @@ local lsp_servers = {
 
 vim.fn.sign_define(
     "LspDiagnosticsSignError",
-    {texthl = "LspDiagnosticsSignError", text = "", numhl = "LspDiagnosticsSignError"}
+    { texthl = "LspDiagnosticsSignError", text = "", numhl = "LspDiagnosticsSignError" }
 )
 vim.fn.sign_define(
     "LspDiagnosticsSignWarning",
-    {texthl = "LspDiagnosticsSignWarning", text = "", numhl = "LspDiagnosticsSignWarning"}
+    { texthl = "LspDiagnosticsSignWarning", text = "", numhl = "LspDiagnosticsSignWarning" }
 )
 vim.fn.sign_define(
     "LspDiagnosticsSignHint",
-    {texthl = "LspDiagnosticsSignHint", text = "", numhl = "LspDiagnosticsSignHint"}
+    { texthl = "LspDiagnosticsSignHint", text = "", numhl = "LspDiagnosticsSignHint" }
 )
 vim.fn.sign_define(
     "LspDiagnosticsSignInformation",
-    {texthl = "LspDiagnosticsSignInformation", text = "", numhl = "LspDiagnosticsSignInformation"}
+    { texthl = "LspDiagnosticsSignInformation", text = "", numhl = "LspDiagnosticsSignInformation" }
 )
 
 vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
-  vim.lsp.diagnostic.on_publish_diagnostics, {
-    virtual_text = {
-      prefix = "",
-      spacing = 0,
-    },
-    signs = true,
-    underline = true,
-  }
+    vim.lsp.diagnostic.on_publish_diagnostics, {
+        virtual_text = {
+            prefix = "",
+            spacing = 0,
+        },
+        signs = true,
+        underline = true,
+    }
 )
 
 -- symbols for autocomplete

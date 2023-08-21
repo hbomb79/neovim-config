@@ -8,4 +8,5 @@
 
 require "settings"
 require "plugins"
+require "auto"
 require "keymappings"

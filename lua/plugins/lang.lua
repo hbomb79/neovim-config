@@ -1,7 +1,8 @@
 local Plug = require "plugin-wrapper"
 
+Plug 'folke/neodev.nvim'
 Plug 'ray-x/guihua.lua'
-Plug {'ray-x/go.nvim', config=function ()
+Plug { 'ray-x/go.nvim', config = function()
     local format_sync_grp = vim.api.nvim_create_augroup("GoFormat", {})
     vim.api.nvim_create_autocmd("BufWritePre", {
         pattern = "*.go",
@@ -12,6 +13,4 @@ Plug {'ray-x/go.nvim', config=function ()
     })
 
     require("go").setup()
-end}
-
-
+end }

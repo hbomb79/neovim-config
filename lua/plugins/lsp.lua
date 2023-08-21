@@ -11,3 +11,11 @@ Plug 'L3MON4D3/LuaSnip'
 Plug 'saadparwaiz1/cmp_luasnip'
 Plug "tami5/lspsaga.nvim"
 Plug 'scalameta/nvim-metals'
+Plug {
+    'mrded/nvim-lsp-notify',
+    config = function()
+        require('lsp-notify').setup({
+            notify = require('notify'),
+        })
+    end
+}

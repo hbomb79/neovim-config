@@ -348,10 +348,13 @@ local properties = {
             'packer',
             'startify',
             'fugitive',
-            'fugitiveblame'
+            'fugitiveblame',
+            'filesystem',
+            'neo-tree',
+            'neotree'
         },
-        buftypes = {'terminal'},
-        bufnames = {}
+        buftypes = {'terminal', 'neo-tree'},
+        bufnames = {'neo-tree'}
     }
 }
 

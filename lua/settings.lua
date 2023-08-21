@@ -14,9 +14,6 @@ end
 -- Basic Configurations
 vim.cmd [[
     syntax on
-    filetype plugin on
-    let g:nvcode_termcolors=256
-    let g:gitblame_enabled = 0
 ]]
 
 -- Vim 'cmd set' commands go here
@@ -73,5 +70,8 @@ apply(vim.wo, {
 -- Global options (likely for plugin configuration, which should
 -- be placed in the plugins config function instead).
 apply(vim.g, {
-    clang_library_path="/usr/lib/libclang.so"
+    clang_library_path = "/usr/lib/libclang.so",
+    mapleader = ' ',
+    nvcode_termcolors = 256,
+    gitblame_enabled = 0
 })

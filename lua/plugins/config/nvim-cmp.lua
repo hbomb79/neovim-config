@@ -1,33 +1,33 @@
 -- Setup nvim-cmp.
 local present, cmp = pcall(require, 'cmp')
-if not present then return end
+if not present then error("Failed to find CMP") end
 
 local icons = {
-   Text = "",
-   Method = "",
-   Function = "",
-   Constructor = "",
-   Field = "ﰠ",
-   Variable = "",
-   Class = "ﴯ",
-   Interface = "",
-   Module = "",
-   Property = "ﰠ",
-   Unit = "塞",
-   Value = "",
-   Enum = "",
-   Keyword = "",
-   Snippet = "",
-   Color = "",
-   File = "",
-   Reference = "",
-   Folder = "",
-   EnumMember = "",
-   Constant = "",
-   Struct = "פּ",
-   Event = "",
-   Operator = "",
-   TypeParameter = "",
+    Text = "",
+    Method = "",
+    Function = "",
+    Constructor = "",
+    Field = "ﰠ",
+    Variable = "",
+    Class = "ﴯ",
+    Interface = "",
+    Module = "",
+    Property = "ﰠ",
+    Unit = "塞",
+    Value = "",
+    Enum = "",
+    Keyword = "",
+    Snippet = "",
+    Color = "",
+    File = "",
+    Reference = "",
+    Folder = "",
+    EnumMember = "",
+    Constant = "",
+    Struct = "פּ",
+    Event = "",
+    Operator = "",
+    TypeParameter = "",
 }
 
 cmp.setup {
@@ -38,7 +38,7 @@ cmp.setup {
     },
     formatting = {
         format = function(entry, vim_item)
-            vim_item.kind = string.format( "%s %s", icons[vim_item.kind], vim_item.kind)
+            vim_item.kind = string.format("%s %s", icons[vim_item.kind], vim_item.kind)
 
             vim_item.menu = ({
                 nvim_lsp = "[LSP]",
@@ -91,4 +91,3 @@ cmp.setup {
 _G.LSP_CMP_CAPABILITIES = function()
     return require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
 end
-

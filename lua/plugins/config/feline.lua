@@ -1,12 +1,6 @@
 -- Configure statusline with Feline
 -- Adapted from https://gist.github.com/pianocomposer321/6151c458132a97590d21415db67361a6
 
-local ok, feline = pcall(require, 'feline')
-if not ok or feline == nil then
-    print("[Warning] Failed to find 'feline' Lua package. Ensure feline.nvim is installed (:PlugInstall)")
-    return
-end
-
 local colors = {
     bg = '#2c323c',
     fg = none,
@@ -17,13 +11,13 @@ local colors = {
     orange = '#d19a66',
     violet = '#b294bb',
     magenta = '#ff80ff',
-    blue = '#61afef';
-    red = '#e88388';
+    blue = '#61afef',
+    red = '#e88388',
 }
 
 local fileName = {}
 local function reverse(tbl)
-    for i = 1, math.floor(#tbl/2) do
+    for i = 1, math.floor(#tbl / 2) do
         local j = #tbl - i + 1
         tbl[i], tbl[j] = tbl[j], tbl[i]
     end
@@ -137,7 +131,7 @@ local function get_filename(component)
     -- local filename = vim.fn.expand('%:t')
     local modified_str = ''
     local filename = vim.fn.expand("%")
-    local icon = require'nvim-web-devicons'.get_icon(filename, vim.fn.expand('%:e') , { default = true })
+    local icon = require 'nvim-web-devicons'.get_icon(filename, vim.fn.expand('%:e'), { default = true })
 
     if filename == '' then filename = 'unnamed' end
 
@@ -151,11 +145,10 @@ local function get_filename(component)
     return icon .. ' ' .. filename .. ' ' .. modified_str
 end
 
+local _ = require "feline"
 local lsp = require 'feline.providers.lsp'
 local vi_mode_utils = require 'feline.providers.vi_mode'
 local cursor = require 'feline.providers.cursor'
-
-
 local comps = {
     metals_status = {
         provider = function()
@@ -175,7 +168,7 @@ local comps = {
     vi_mode = {
         left = {
             provider = function()
-                local current_text = ' '..vi_mode_text[vim.fn.mode()]..' '
+                local current_text = ' ' .. vi_mode_text[vim.fn.mode()] .. ' '
                 return current_text
             end,
             hl = function()
@@ -238,8 +231,8 @@ local comps = {
     },
     position = {
         provider = function()
-            pos = cursor:position{}
-            return ' '..pos..' '
+            pos = cursor:position {}
+            return ' ' .. pos .. ' '
         end,
         left_sep = ' ',
         hl = function()
@@ -353,8 +346,8 @@ local properties = {
             'neo-tree',
             'neotree'
         },
-        buftypes = {'terminal', 'neo-tree'},
-        bufnames = {'neo-tree'}
+        buftypes = { 'terminal', 'neo-tree' },
+        bufnames = { 'neo-tree' }
     }
 }
 
@@ -372,7 +365,7 @@ local components = {
             comps.diagnos.info,
         },
         {}, -- middle
-        { -- right
+        {   -- right
             comps.metals_status,
             comps.git.add,
             comps.git.change,
@@ -387,7 +380,7 @@ local components = {
     }
 }
 
-feline.setup {
+return {
     default_bg = colors.bg,
     default_fg = colors.fg,
     components = components,

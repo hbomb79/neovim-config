@@ -1,9 +1,11 @@
--- A list of LSP configurations we want to setup,
-local lsp_servers = {
-    "lua",
-    "go",
-    "scala"
-}
+-- Format on save using the connected LSP, if possible.
+vim.api.nvim_create_autocmd("BufWritePre", {
+    callback = function() vim.lsp.buf.format() end,
+})
+
+vim.api.nvim_create_autocmd("BufWritePre", {
+    callback = function() vim.lsp.buf.format() end,
+})
 
 vim.fn.sign_define(
     "LspDiagnosticsSignError",
@@ -77,9 +79,9 @@ _G.LSP_COMMON_ON_ATTACH = function(client, bufnr)
     end
 end
 
-for _, k in pairs(lsp_servers) do
-    local ok, err = pcall(require, "lsp." .. k)
-    if not ok then
-        print("[Warning] LSP config for " .. k .. " failed: " .. err)
-    end
-end
+-- for _, k in pairs(lsp_servers) do
+--     local ok, err = pcall(require, "lsp." .. k)
+--     if not ok then
+--         print("[Warning] LSP config for " .. k .. " failed: " .. err)
+--     end
+-- end

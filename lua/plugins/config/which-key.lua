@@ -2,12 +2,8 @@ local whichkey = require("which-key")
 
 whichkey.setup {
     plugins = {
-        marks = true,         -- shows a list of your marks on ' and `
-        registers = true,     -- shows your registers on " in NORMAL or <C-r> in INSERT mode
-        spelling = {
-            enabled = true,   -- enabling this will show WhichKey when pressing z= to select spelling suggestions
-            suggestions = 20, -- how many suggestions should be shown in the list?
-        },
+        marks = true,     -- shows a list of your marks on ' and `
+        registers = true, -- shows your registers on " in NORMAL or <C-r> in INSERT mode
         -- the presets plugin, adds help for a bunch of default keybindings in Neovim
         -- No actual key bindings are created
         presets = {
@@ -75,7 +71,7 @@ vim.api.nvim_set_keymap("v", "<leader>/", ":Commentary<CR>", { noremap = true, s
 
 -- Configure <leader>-less keymaps
 whichkey.register({
-    ["<S-x>"] = { "<cmd>bdelete<cr>", "" },
+    ["<S-x>"] = { "<cmd>bdelete<CR>", "" },
     K = { "<cmd>lua vim.lsp.buf.hover()<CR>", "LSP Hover" },
     g = {
         name = "+LSP",
@@ -134,24 +130,24 @@ whichkey.register({
         c = { "<cmd>Telescope git_commits<CR>", "Checkout commit" },
         C = { "<cmd>Telescope git_bcommits<CR>", "Checkout commit(for current file)" },
     },
-    l = {
-        name = "+LSP",
-        a = { "<cmd>Lspsaga code_action<CR>", "Code Action" },
-        A = { "<cmd>Lspsaga range_code_action<CR>", "Selected Action" },
-        d = { "<cmd>Telescope lsp_document_diagnostics<CR>", "Document Diagnostics" },
-        D = { "<cmd>Telescope lsp_workspace_diagnostics<CR>", "Workspace Diagnostics" },
-        f = { "<cmd>LspFormatting<CR>", "Format" },
-        i = { "<cmd>LspInfo<CR>", "Info" },
-        l = { "<cmd>Lspsaga lsp_finder<CR>", "LSP Finder" },
-        L = { "<cmd>Lspsaga show_line_diagnostics<CR>", "Line Diagnostics" },
-        p = { "<cmd>Lspsaga preview_definition<CR>", "Preview Definition" },
-        q = { "<cmd>Telescope quickfix<CR>", "Quickfix" },
-        r = { "<cmd>Lspsaga rename<CR>", "Rename" },
-        t = { "<cmd>LspTypeDefinition<CR>", "Type Definition" },
-        x = { "<cmd>cclose<CR>", "Close Quickfix" },
-        s = { "<cmd>Telescope lsp_document_symbols<CR>", "Document Symbols" },
-        S = { "<cmd>Telescope lsp_workspace_symbols<CR>", "Workspace Symbols" }
-    },
+    -- l = {
+    --     name = "+LSP",
+    --     a = { "<cmd>Lspsaga code_action<CR>", "Code Action" },
+    --     A = { "<cmd>Lspsaga range_code_action<CR>", "Selected Action" },
+    --     d = { "<cmd>Telescope lsp_document_diagnostics<CR>", "Document Diagnostics" },
+    --     D = { "<cmd>Telescope lsp_workspace_diagnostics<CR>", "Workspace Diagnostics" },
+    --     f = { "<cmd>LspFormatting<CR>", "Format" },
+    --     i = { "<cmd>LspInfo<CR>", "Info" },
+    --     l = { "<cmd>Lspsaga lsp_finder<CR>", "LSP Finder" },
+    --     L = { "<cmd>Lspsaga show_line_diagnostics<CR>", "Line Diagnostics" },
+    --     p = { "<cmd>Lspsaga preview_definition<CR>", "Preview Definition" },
+    --     q = { "<cmd>Telescope quickfix<CR>", "Quickfix" },
+    --     r = { "<cmd>Lspsaga rename<CR>", "Rename" },
+    --     t = { "<cmd>LspTypeDefinition<CR>", "Type Definition" },
+    --     x = { "<cmd>cclose<CR>", "Close Quickfix" },
+    --     s = { "<cmd>Telescope lsp_document_symbols<CR>", "Document Symbols" },
+    --     S = { "<cmd>Telescope lsp_workspace_symbols<CR>", "Workspace Symbols" }
+    -- },
     s = {
         name = "+Search",
         b = { "<cmd>Telescope git_branches<CR>", "Checkout branch" },
@@ -164,11 +160,6 @@ whichkey.register({
         r = { "<cmd>Telescope oldfiles<CR>", "Open Recent File" },
         R = { "<cmd>Telescope registers<CR>", "Registers" },
         t = { "<cmd>Telescope live_grep<CR>", "Text" }
-    },
-    S = {
-        name = "+Session",
-        s = { "<cmd>SessionSave<CR>", "Save Session" },
-        l = { "<cmd>SessionLoad<CR>", "Load Session" }
     },
     p = {
         name = "harpoon",

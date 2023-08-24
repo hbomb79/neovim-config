@@ -7,7 +7,42 @@ metals_config.settings = {
 
 metals_config.init_options.statusBarProvider = "on"
 metals_config.capabilities = require("cmp_nvim_lsp").default_capabilities()
-metals_config.on_attach = function(client, bufnr)
+
+-- Capture the metals custom status messages, and redirect
+-- them to the standard $/progress handler so that other plugins
+-- (e.g. fidget) can capture and display them
+-- https://github.com/scalameta/nvim-metals/discussions/479
+metals_config.handlers['metals/status'] = function(err, status, ctx)
+    local val = {}
+    local text = status.text:gsub('[⠇⠋⠙⠸⠴⠦]', ''):gsub("^%s*(.-)%s*$", "%1")
+    if status.hide then
+        val = { kind = "end" }
+    elseif status.show then
+        val = { kind = "begin", title = text }
+    elseif status.text then
+        val = { kind = "report", message = text }
+    else
+        return
+    end
+
+    local msg = { token = "metals", value = val }
+    vim.lsp.handlers["$/progress"](err, msg, ctx)
+end
+
+
+-- Autocmd that will actually be in charging of starting the whole thing
+local nvim_metals_group = vim.api.nvim_create_augroup("nvim-metals", { clear = true })
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = { "scala", "sbt" },
+    callback = function()
+        require("metals").initialize_or_attach(metals_config)
+    end,
+    group = nvim_metals_group,
+})
+
+-- Register custom metals LSP handler which will
+-- populate some special keybinds for metals-specific commands
+require "lsp":set_handler('metals', function(_, buffer)
     require("which-key").register({
         name = "Scala Metals",
         ["wh"] = {
@@ -32,41 +67,8 @@ metals_config.on_attach = function(client, bufnr)
         },
     }, {
         prefix = "<leader>m",
+        buffer = buffer
     })
 
-    vim.api.nvim_buf_set_keymap(bufnr, "v", "K", "<cmd>lua require('metals').type_of_range()")
-end
-
--- Capture the metals custom status messages, and redirect
--- them to the standard $/progress handler so that other plugins
--- (e.g. fidget) can capture and display them
--- https://github.com/scalameta/nvim-metals/discussions/479
-metals_config.handlers['metals/status'] = function(err, status, ctx)
-    local val = {}
-    local text = status.text:gsub('[⠇⠋⠙⠸⠴⠦]', ''):gsub("^%s*(.-)%s*$", "%1")
-    if status.hide then
-        val = { kind = "end" }
-    elseif status.show then
-        val = { kind = "begin", title = text }
-    elseif status.text then
-        val = { kind = "report", message = text }
-    else
-        return
-    end
-
-    local msg = { token = "metals", value = val }
-    vim.lsp.handlers["$/progress"](err, msg, ctx)
-end
-
-
-local scalaFilePattern = { "scala", "sbt" }
-
--- Autocmd that will actually be in charging of starting the whole thing
-local nvim_metals_group = vim.api.nvim_create_augroup("nvim-metals", { clear = true })
-vim.api.nvim_create_autocmd("FileType", {
-    pattern = scalaFilePattern,
-    callback = function()
-        require("metals").initialize_or_attach(metals_config)
-    end,
-    group = nvim_metals_group,
-})
+    vim.api.nvim_buf_set_keymap(buffer, "v", "K", "<cmd>lua require('metals').type_of_range()", {})
+end)

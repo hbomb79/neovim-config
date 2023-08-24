@@ -5,6 +5,4 @@ return {
         "tpope/vim-fugitive",
         cmd = "G"
     },
-    "tpope/vim-rhubarb",
-    "airblade/vim-gitgutter",
 }

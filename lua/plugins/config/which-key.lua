@@ -111,6 +111,7 @@ whichkey.register({
     ["/"] = { "<cmd>Commentary<cr>", "Comment" },
     ["c"] = { "<cmd>bd<cr>", "Close Buffer" },
     ["e"] = { "<cmd>Neotree<cr>", "Open File Tree" },
+    ["E"] = { "<cmd>Neotree reveal<cr>", "Reveal file in Tree" },
     ["f"] = { "<cmd>Telescope find_files<cr>", "Find File" },
     [";"] = { "<cmd>Dashboard<cr>", "Open Dashboard" },
     d = {

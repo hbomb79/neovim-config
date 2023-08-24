@@ -74,10 +74,3 @@ _G.LSP_COMMON_ON_ATTACH = function(client, bufnr)
         ]], false)
     end
 end
-
--- for _, k in pairs(lsp_servers) do
---     local ok, err = pcall(require, "lsp." .. k)
---     if not ok then
---         print("[Warning] LSP config for " .. k .. " failed: " .. err)
---     end
--- end

@@ -1,5 +1,4 @@
 return {
-    "tami5/lspsaga.nvim",
     {
         'williamboman/mason.nvim',
         opts = {},
@@ -20,8 +19,6 @@ return {
         "j-hui/fidget.nvim",
         tag = "legacy",
         event = "LspAttach",
-        opts = {
-            -- options
-        },
+        opts = {},
     }
 }

@@ -2,6 +2,7 @@ return {
     {
         "nvim-treesitter/nvim-treesitter",
         config = function()
+            ---@diagnostic disable-next-line: missing-fields
             require 'nvim-treesitter.configs'.setup {
                 ensure_installed = { "go", "scala", "lua", "javascript" },
                 highlight = {
@@ -9,6 +10,12 @@ return {
                 },
             }
         end,
+        dependencies = {
+            {
+                'nvim-treesitter/nvim-treesitter-context',
+                opts = {}
+            }
+        },
         build = ":TSUpdate",
     },
     {
@@ -25,5 +32,5 @@ return {
         'nvim-treesitter/playground',
         dependencies = { "nvim-treesitter/nvim-treesitter" },
         cmd = "TSPlaygroundToggle"
-    }
+    },
 }

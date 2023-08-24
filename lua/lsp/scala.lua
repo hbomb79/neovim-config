@@ -7,6 +7,35 @@ metals_config.settings = {
 
 metals_config.init_options.statusBarProvider = "on"
 metals_config.capabilities = require("cmp_nvim_lsp").default_capabilities()
+metals_config.on_attach = function(client, bufnr)
+    require("which-key").register({
+        name = "Scala Metals",
+        ["wh"] = {
+            function() require("metals").hover_worksheet({ border = "single" }) end,
+            "Hover worksheet"
+        },
+        ["tt"] = {
+            function() require("metals.tvp").toggle_tree_view() end,
+            "Toggle tree view"
+        },
+        ["tr"] = {
+            function() require("metals.tvp").reveal_in_tree() end,
+            "Reveal in tree",
+        },
+        ["c"] = {
+            function() require("telescope").extensions.metals.commands() end,
+            "Commands"
+        },
+        ["i"] = {
+            function() require("metals").toggle_setting("showImplicitArguments") end,
+            "Toggle implicit arguments",
+        },
+    }, {
+        prefix = "<leader>m",
+    })
+
+    vim.api.nvim_buf_set_keymap(bufnr, "v", "K", "<cmd>lua require('metals').type_of_range()")
+end
 
 -- Capture the metals custom status messages, and redirect
 -- them to the standard $/progress handler so that other plugins

@@ -32,7 +32,12 @@ return {
     },
     {
         "nvim-neo-tree/neo-tree.nvim",
-        opts = { close_if_last_window = true },
+        opts = {
+            close_if_last_window = true,
+            source_selector = {
+                winbar = true
+            }
+        },
         branch = "v3.x",
         dependencies = {
             "nvim-lua/plenary.nvim",

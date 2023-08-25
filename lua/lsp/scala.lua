@@ -45,15 +45,15 @@ vim.api.nvim_create_autocmd("FileType", {
 require "lsp":set_handler('metals', function(_, buffer)
     require("which-key").register({
         name = "Scala Metals",
-        ["wh"] = {
+        ["h"] = {
             function() require("metals").hover_worksheet({ border = "single" }) end,
             "Hover worksheet"
         },
-        ["tt"] = {
+        ["t"] = {
             function() require("metals.tvp").toggle_tree_view() end,
             "Toggle tree view"
         },
-        ["tr"] = {
+        ["r"] = {
             function() require("metals.tvp").reveal_in_tree() end,
             "Reveal in tree",
         },

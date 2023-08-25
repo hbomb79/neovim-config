@@ -56,8 +56,7 @@ whichkey.register({
     l = {
         name = "+LSP",
         a = { "<cmd>lua vim.lsp.buf.code_action()<CR>", "Code Action" },
-        d = { "<cmd>Telescope lsp_document_diagnostics<CR>", "Document Diagnostics" },
-        D = { "<cmd>Telescope lsp_workspace_diagnostics<CR>", "Workspace Diagnostics" },
+        d = { "<cmd>Telescope diagnostics<CR>", "Document Diagnostics" },
         s = { "<cmd>Telescope lsp_document_symbols<CR>", "Document Symbols" },
         S = { "<cmd>Telescope lsp_workspace_symbols<CR>", "Workspace Symbols" },
         f = { "<cmd>lua vim.lsp.buf.format()<CR>", "Format" },
@@ -99,6 +98,7 @@ whichkey.register({
         f = { "<cmd>Telescope find_files<CR>", "Find File" },
         m = { "<cmd>Telescope marks<CR>", "Marks" },
         M = { "<cmd>Telescope man_pages<CR>", "Man Pages" },
+        h = { "<cmd>Telescope help_tags<CR>", "Help Tag" },
         r = { "<cmd>Telescope oldfiles<CR>", "Open Recent File" },
         R = { "<cmd>Telescope registers<CR>", "Registers" },
         t = { "<cmd>Telescope live_grep<CR>", "Text" }

@@ -13,7 +13,7 @@ return {
         dependencies = {
             {
                 'nvim-treesitter/nvim-treesitter-context',
-                opts = {}
+                config = true
             }
         },
         build = ":TSUpdate",

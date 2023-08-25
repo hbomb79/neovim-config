@@ -1,7 +1,4 @@
--- Setup nvim-cmp.
-local present, cmp = pcall(require, 'cmp')
-if not present then error("Failed to find CMP") end
-
+local cmp = require 'cmp'
 local icons = {
     Text = "",
     Method = "",
@@ -30,7 +27,7 @@ local icons = {
     TypeParameter = "",
 }
 
-cmp.setup {
+return {
     preselect = cmp.PreselectMode.None,
     snippet = {
         expand = function(args)
@@ -88,7 +85,3 @@ cmp.setup {
         { name = "path" },
     }
 }
-
-_G.LSP_CMP_CAPABILITIES = function()
-    return require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
-end

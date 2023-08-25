@@ -3,8 +3,8 @@ return {
     {
         'glepnir/dashboard-nvim',
         event = 'VimEnter',
-        opts = {},
-        dependencies = { { 'nvim-tree/nvim-web-devicons' } }
+        config = true,
+        dependencies = { 'nvim-tree/nvim-web-devicons' }
     },
     {
         "tpope/vim-commentary",
@@ -16,19 +16,12 @@ return {
     },
     {
         "freddiehaddad/feline.nvim",
-        dependencies = {
-            "nvim-tree/nvim-web-devicons",
-        },
-        config = function()
-            local opts = require("plugins.config.feline")
-            require("feline").setup(opts)
-        end
+        dependencies = { "nvim-tree/nvim-web-devicons" },
+        opts = function() return require("plugins.config.feline") end,
     },
     {
         "folke/which-key.nvim",
-        config = function()
-            require("plugins.config.which-key")
-        end,
+        config = function() require("plugins.config.which-key") end,
     },
     {
         "nvim-neo-tree/neo-tree.nvim",
@@ -50,6 +43,12 @@ return {
         "phaazon/hop.nvim",
         opts = { keys = 'etovxqpdygfblzhckisuran' },
         branch = "v2",
+        lazy = true
+    },
+    {
+        "folke/trouble.nvim",
+        dependencies = { "nvim-tree/nvim-web-devicons" },
+        config = true,
         lazy = true
     }
 }

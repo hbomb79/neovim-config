@@ -3,7 +3,7 @@
 
 local colors = {
     bg = '#2c323c',
-    fg = none,
+    fg = nil,
     yellow = '#e5c07b',
     cyan = '#8abeb7',
     darkblue = '#528bff',

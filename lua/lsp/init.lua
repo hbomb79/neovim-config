@@ -5,8 +5,7 @@ local M = {
 
 
 -- Initialises the plugin manager by creating an autocmd on the
--- LspAttach event, which will execute the common LSP on attach functionality,
--- as well as any LSP-client-specific handlers which were attached prior
+-- LspAttach event, and configuring the global LSP settings/handlers.
 function M:initialise()
     if self.initialised then
         return
@@ -77,6 +76,8 @@ function M:initialise()
     }
 end
 
+-- Handles an 'LspAttach' event by execting the common on_attach, and any
+-- language-server specific handlers (which must have been registered before-hand).
 function M:buffer_attach(buffer)
     local clients = vim.lsp.get_active_clients { bufnr = buffer }
     for _, client in pairs(clients) do
@@ -89,8 +90,12 @@ function M:buffer_attach(buffer)
     end
 end
 
+-- Common 'on_attach' behaviour which should be applied to a buffer
+-- anytime a buffer attaches to a language server.
+-- It should be expected that this code could be run multiple times for the
+-- same buffer, and so the code in here should be aware of that.
 function M:common_on_attach(buffer, client)
-    vim.notify("Client '" .. client.name .. "' (buffer " .. vim.inspect(buffer) .. ") attached")
+    vim.notify("Client '" .. client.name .. "' (buffer " .. vim.inspect(buffer) .. ") attached", vim.log.levels.TRACE)
 
     -- Format on save using the connected LSP, if possible.
     vim.api.nvim_create_autocmd("BufWritePre", {

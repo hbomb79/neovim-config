@@ -1,12 +1,14 @@
 return {
     {
         'williamboman/mason.nvim',
-        opts = {},
+        config = true,
     },
     { "neovim/nvim-lspconfig" },
     {
         'hrsh7th/nvim-cmp',
-        config = function() require("plugins.config.nvim-cmp") end,
+        opts = function()
+            return require("plugins.config.nvim-cmp")
+        end,
         dependencies = {
             'hrsh7th/cmp-nvim-lsp',
             'hrsh7th/cmp-buffer',
@@ -19,6 +21,6 @@ return {
         "j-hui/fidget.nvim",
         tag = "legacy",
         event = "LspAttach",
-        opts = {},
+        config = true
     }
 }

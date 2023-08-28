@@ -16,7 +16,10 @@ return {
     },
     {
         "freddiehaddad/feline.nvim",
-        dependencies = { "nvim-tree/nvim-web-devicons" },
+        dependencies = {
+            "nvim-tree/nvim-web-devicons",
+            "catppuccin"
+        },
         opts = function() return require("plugins.config.feline") end,
     },
     {
@@ -50,5 +53,12 @@ return {
         dependencies = { "nvim-tree/nvim-web-devicons" },
         config = true,
         lazy = true
+    },
+    {
+        "rcarriga/nvim-notify",
+        config = function()
+            vim.notify = require "notify"
+            vim.notify_once = require "notify"
+        end
     }
 }

@@ -31,7 +31,8 @@ set {
     "nocompatible",
     "completeopt=menu,menuone,noselect",
     "laststatus=3",
-    "winbar=%=%m\\ %f"
+    "winbar=%=%m\\ %f",
+    "cmdheight=0"
 }
 
 -- Buffer/general options go here

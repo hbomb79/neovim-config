@@ -21,6 +21,10 @@ return {
         "j-hui/fidget.nvim",
         tag = "legacy",
         event = "LspAttach",
-        config = true
+        opts = {
+            text = {
+                spinner = "arc"
+            }
+        }
     }
 }

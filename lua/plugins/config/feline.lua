@@ -148,6 +148,7 @@ end
 local lsp = require 'feline.providers.lsp'
 local vi_mode_utils = require 'feline.providers.vi_mode'
 local cursor = require 'feline.providers.cursor'
+local seps = require 'feline.defaults'.statusline.separators.default_value
 local comps = {
     vi_mode = {
         left = {
@@ -163,8 +164,8 @@ local comps = {
                     style = 'bold'
                 }
                 return val
-            end
-            -- right_sep = ' '
+            end,
+            right_sep = seps.right_rounded,
         },
         right = {
             provider = '▊',
@@ -180,8 +181,6 @@ local comps = {
     },
     file = {
         info = {
-            -- provider = 'file_info',
-            -- provider = fileName.get_current_ufn,
             provider = get_filename,
             hl = {
                 fg = colors.blue,
@@ -209,6 +208,7 @@ local comps = {
     line_percentage = {
         provider = 'line_percentage',
         left_sep = ' ',
+        right_sep = ' ',
         hl = {
             style = 'bold'
         }
@@ -218,7 +218,7 @@ local comps = {
             local pos = cursor:position {}
             return ' ' .. pos .. ' '
         end,
-        left_sep = ' ',
+        left_sep = seps.left_rounded,
         hl = function()
             local val = {
                 name = vi_mode_utils.get_mode_highlight_name(),
@@ -347,11 +347,10 @@ local components = {
             comps.diagnos.hint,
             comps.diagnos.info,
         },
-        {
-            comps.file.info,
-            comps.file.type,
-        }, -- middle
-        {  -- right
+        { -- middle
+            comps.file.info
+        },
+        { -- right
             comps.git.add,
             comps.git.change,
             comps.git.remove,

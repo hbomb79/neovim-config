@@ -45,30 +45,12 @@ vim.api.nvim_create_autocmd("FileType", {
 require "lsp":set_handler('metals', function(_, buffer)
     require("which-key").register({
         name = "Scala Metals",
-        ["h"] = {
-            function() require("metals").hover_worksheet({ border = "single" }) end,
-            "Hover worksheet"
-        },
-        ["t"] = {
-            function() require("metals.tvp").toggle_tree_view() end,
-            "Toggle tree view"
-        },
-        ["r"] = {
-            function() require("metals.tvp").reveal_in_tree() end,
-            "Reveal in tree",
-        },
-        ["c"] = {
-            function() require("telescope").extensions.metals.commands() end,
-            "Commands"
-        },
-        ["i"] = {
-            function() require("metals").toggle_setting("showImplicitArguments") end,
-            "Toggle implicit arguments",
-        },
-    }, {
-        prefix = "<leader>m",
-        buffer = buffer
-    })
+        ["h"] = { "lua require('metals').hover_worksheet({ border = 'single' })<CR>", "Hover worksheet" },
+        ["t"] = { "lua require('metals.tvp').toggle_tree_view()<CR>", "Toggle tree view" },
+        ["r"] = { "lua require('metals.tvp').reveal_in_tree()<CR>", "Reveal in tree", },
+        ["c"] = { "lua require('telescope').extensions.metals.commands()<CR>", "Commands" },
+        ["i"] = { "lua require('metals').toggle_setting('showImplicitArguments')<CR>", "Toggle implicit arguments" },
+    }, { prefix = "<leader>m", buffer = buffer })
 
     vim.api.nvim_buf_set_keymap(buffer, "v", "K", "<cmd>lua require('metals').type_of_range()", {})
 end)

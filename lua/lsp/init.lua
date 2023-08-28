@@ -103,6 +103,18 @@ function M:common_on_attach(buffer, client)
         callback = function() vim.lsp.buf.format() end,
     })
 
+    -- Clear any hover-effects when the cusor moves
+    vim.api.nvim_create_autocmd("CursorMoved", {
+        buffer = buffer,
+        callback = vim.lsp.buf.clear_references
+    })
+
+    -- Highlight matching terms under the cusor on 'hover'
+    vim.api.nvim_create_autocmd("CursorHold", {
+        buffer = buffer,
+        callback = vim.lsp.buf.document_highlight
+    })
+
     require("which-key").register({
         l = {
             name = "+LSP",

@@ -106,22 +106,17 @@ function M:common_on_attach(buffer, client)
     require("which-key").register({
         l = {
             name = "+LSP",
-            a = { "<cmd>Lspsaga code_action<CR>", "Code Action" },
-            A = { "<cmd>Lspsaga range_code_action<CR>", "Selected Action" },
-            d = { "<cmd>Telescope lsp_document_diagnostics<CR>", "Document Diagnostics" },
-            D = { "<cmd>Telescope lsp_workspace_diagnostics<CR>", "Workspace Diagnostics" },
-            f = { "<cmd>LspFormatting<CR>", "Format" },
-            i = { "<cmd>LspInfo<CR>", "Info" },
-            l = { "<cmd>Lspsaga lsp_finder<CR>", "LSP Finder" },
-            L = { "<cmd>Lspsaga show_line_diagnostics<CR>", "Line Diagnostics" },
-            p = { "<cmd>Lspsaga preview_definition<CR>", "Preview Definition" },
-            q = { "<cmd>Telescope quickfix<CR>", "Quickfix" },
-            r = { "<cmd>Lspsaga rename<CR>", "Rename" },
-            t = { "<cmd>LspTypeDefinition<CR>", "Type Definition" },
-            x = { "<cmd>cclose<CR>", "Close Quickfix" },
+            a = { "<cmd>lua vim.lsp.buf.code_action()<CR>", "Code Action" },
+            d = { "<cmd>Telescope diagnostics<CR>", "Document Diagnostics" },
             s = { "<cmd>Telescope lsp_document_symbols<CR>", "Document Symbols" },
-            S = { "<cmd>Telescope lsp_workspace_symbols<CR>", "Workspace Symbols" }
-        },
+            S = { "<cmd>Telescope lsp_workspace_symbols<CR>", "Workspace Symbols" },
+            f = { "<cmd>lua vim.lsp.buf.format()<CR>", "Format" },
+            i = { "<cmd>LspInfo<CR>", "Info" },
+            r = { "<cmd>lua vim.lsp.buf.rename()<CR>", "Rename" },
+            n = { "<cmd>lua vim.diagnostic.goto_next()<CR>", "Next Error" },
+            p = { "<cmd>lua vim.diagnostic.goto_prev()<CR>", "Prev Error" },
+            l = { "<cmd>lua vim.diagnostic.open_float()<CR>", "Line Diagnostics" },
+        }
     }, { prefix = "<leader>", buffer = buffer })
 end
 

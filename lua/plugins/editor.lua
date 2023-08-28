@@ -60,5 +60,26 @@ return {
             vim.notify = require "notify"
             vim.notify_once = require "notify"
         end
+    },
+    {
+        "RRethy/vim-illuminate",
+        config = function()
+            require('illuminate').configure({
+                providers = {
+                    'lsp',
+                    'treesitter',
+                    'regex',
+                },
+                delay = 100,
+                filetypes_denylist = {
+                    'dirvish',
+                    'fugitive',
+                },
+            })
+
+            vim.api.nvim_set_hl(0, "IlluminatedWordText", {})
+            vim.api.nvim_set_hl(0, "IlluminatedWordRead", { link = "Visual" })
+            vim.api.nvim_set_hl(0, "IlluminatedWordWrite", { link = "Visual" })
+        end,
     }
 }

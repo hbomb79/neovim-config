@@ -79,9 +79,13 @@ return {
     },
     sources = {
         { name = "nvim_lsp" },
-        { name = "luasnip" },
-        { name = "buffer" },
         { name = "nvim_lua" },
+        { name = "luasnip" },
+        { name = "buffer",  keyword_length = 8 },
         { name = "path" },
+    },
+    experimental = {
+        native_menu = false,
+        ghost_text = true
     }
 }

@@ -25,4 +25,4 @@ vim.opt.rtp:prepend(lazypath)
 require "settings"
 require "lsp":initialise()
 require "lazy".setup("plugins")
-require "lsp"
+require "lang"

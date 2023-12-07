@@ -25,6 +25,45 @@ return {
             text = {
                 spinner = "arc"
             }
-        }
+        },
+    },
+    {
+        "ray-x/lsp_signature.nvim",
+        event = "VeryLazy",
+        opts = { hint_enable = false }
+    },
+    -- {
+    --     "folke/noice.nvim",
+    --     opts = {}
+    -- }
+    {
+        "nvim-neotest/neotest",
+        dependencies = {
+            "nvim-lua/plenary.nvim",
+            "nvim-treesitter/nvim-treesitter",
+            "antoinemadec/FixCursorHold.nvim",
+            "stevanmilic/neotest-scala"
+        },
+        config = function()
+            ---@diagnostic disable-next-line: missing-fields
+            require("neotest").setup({
+                adapters = {
+                    require("neotest-scala")({
+                        -- Command line arguments for runner
+                        -- Can also be a function to return dynamic values
+                        args = { "--no-color" },
+                        -- Runner to use. Will use bloop by default.
+                        -- Can be a function to return dynamic value.
+                        -- For backwards compatibility, it also tries to read the vim-test scala config.
+                        -- Possibly values bloop|sbt.
+                        runner = "sbt",
+                        -- Test framework to use. Will use utest by default.
+                        -- Can be a function to return dynamic value.
+                        -- Possibly values utest|munit|scalatest.
+                        framework = "scalatest",
+                    })
+                }
+            })
+        end
     }
 }

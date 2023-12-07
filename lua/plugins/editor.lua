@@ -12,6 +12,7 @@ return {
     },
     {
         "ThePrimeagen/harpoon",
+        opts = { menu = { width = 120 } },
         lazy = true
     },
     {
@@ -60,5 +61,18 @@ return {
             vim.notify = require "notify"
             vim.notify_once = require "notify"
         end
+    },
+    {
+        "debugloop/telescope-undo.nvim",
+        config = function()
+            require("telescope").load_extension "undo"
+            require "which-key".register({
+                ["u"] = { "<cmd>Telescope undo<CR>", "Undo Tree" }
+            }, { prefix = "<leader>t" })
+        end,
+        dependencies = {
+            "nvim-telescope/telescope.nvim",
+            "folke/which-key.nvim"
+        }
     }
 }

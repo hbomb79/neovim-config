@@ -56,7 +56,7 @@ apply(vim.o, {
     clipboard = "unnamedplus",
     guifont = "SauceCodePro Nerd Font:h17",
     foldmethod = "indent",
-    foldnestmax = 1,
+    -- foldnestmax = 1,
     foldenable = false,
     foldlevel = 2
 })

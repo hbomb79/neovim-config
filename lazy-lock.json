@@ -27,6 +27,7 @@
   "neotest-scala": { "branch": "main", "commit": "685f0fac6196862b47025c6b91513af6a406501a" },
   "nui.nvim": { "branch": "main", "commit": "9e3916e784660f55f47daa6f26053ad044db5d6a" },
   "nvim-cmp": { "branch": "main", "commit": "51f1e11a89ec701221877532ee1a23557d291dd5" },
+  "nvim-lint": { "branch": "master", "commit": "6427b17058a74891bb287b275356bbc445b5924c" },
   "nvim-lspconfig": { "branch": "master", "commit": "f7922e59aeb9bc3e31a660ea4e7405ffa3fc2c3a" },
   "nvim-metals": { "branch": "main", "commit": "57cff9a240f3337129188997887d8848fe6022ad" },
   "nvim-notify": { "branch": "master", "commit": "ea9c8ce7a37f2238f934e087c255758659948e0f" },

@@ -3,7 +3,12 @@ return {
         'williamboman/mason.nvim',
         config = true,
     },
-    { "neovim/nvim-lspconfig" },
+    {
+        "neovim/nvim-lspconfig",
+        config = function()
+            require "lsp.yaml"
+        end
+    },
     {
         'hrsh7th/nvim-cmp',
         opts = function()
@@ -36,6 +41,12 @@ return {
     --     "folke/noice.nvim",
     --     opts = {}
     -- }
+    {
+        "mfussenegger/nvim-lint",
+        config = function()
+            require "plugins.config.nvim-lint"
+        end,
+    },
     {
         "nvim-neotest/neotest",
         dependencies = {

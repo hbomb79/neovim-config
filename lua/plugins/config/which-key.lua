@@ -1,4 +1,5 @@
 local whichkey = require("which-key")
+local USE_TROUBLE_FOR_LSP_BINDINGS = true
 
 -- Default options are fine
 whichkey.setup {}
@@ -9,16 +10,27 @@ vim.api.nvim_set_keymap('n', '<Space>', '<NOP>', { noremap = true, silent = true
 -- Comments in visual mode
 vim.api.nvim_set_keymap("v", "<leader>/", ":Commentary<CR>", { noremap = true, silent = true })
 
+-- Sends LSP list response to QF list, and then
+-- opens that list with trouble.nvim and closes the QF list.
+local function lsp_on_list(options)
+    vim.fn.setqflist({}, ' ', options)
+
+    if USE_TROUBLE_FOR_LSP_BINDINGS then
+        require("trouble").open("quickfix")
+        vim.cmd("cclose")
+    end
+end
+
 -- Configure <leader>-less, normal-mode keymaps
 whichkey.register({
     ["<S-x>"] = { "<cmd>bdelete<CR>", "" },
     K = { "<cmd>lua vim.lsp.buf.hover()<CR>", "LSP Hover" },
     g = {
         name = "+LSP",
-        d = { "<cmd>lua vim.lsp.buf.definition()<CR>zz<CR>", "Jump to Definition" },
-        D = { "<cmd>lua vim.lsp.buf.declaration()<CR>zz<CR>", "Jump to Declaration" },
-        r = { "<cmd>lua vim.lsp.buf.references()<CR>", "List References" },
-        i = { "<cmd>lua vim.lsp.buf.implementation()<CR>zz<CR>", "Jump to Implementation" }
+        r = { function() vim.lsp.buf.references(nil, { on_list = lsp_on_list }) end, "List References" },
+        i = { function() vim.lsp.buf.implementation { on_list = lsp_on_list } end, "Show Implementations" },
+        d = { function() vim.lsp.buf.definition { on_list = lsp_on_list } end, "Jump to Definition" },
+        D = { function() vim.lsp.buf.declaration { on_list = lsp_on_list } end, "Jump to Declaration" },
     },
     H = {
         name = "+Hop",
@@ -58,7 +70,7 @@ whichkey.register({
         t = { "<cmd>lua require('trouble').open()<CR>", "Open" },
         w = { "<cmd>lua require('trouble').open('workspace_diagnostics')<CR>", "Workspace" },
         d = { "<cmd>lua require('trouble').open('document_diagnostics')<CR>", "Document" },
-        q = { "<cmd>lua require('trouble').open('quickfix')<CR>", "Quickfix" },
+        q = { "<cmd>lua require('trouble').open('quickfix')<CR><cmd>cclose<CR>", "Quickfix" },
         l = { "<cmd>lua require('trouble').open('loclist')<CR>", "Loclist" },
         r = { "<cmd>lua require('trouble').open('lsp_references')<CR>", "References" },
         n = { "<cmd>lua require('trouble').next {}<CR>", "Next" },

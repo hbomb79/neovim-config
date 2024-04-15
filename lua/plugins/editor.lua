@@ -59,6 +59,14 @@ return {
             auto_refresh = false,
             auto_close = true,
         },
+        config = function(_, opts)
+            require("trouble").setup(opts)
+
+            -- WARN this is fragile code which is designed to de-duplicate
+            -- multiple items which reference the same location.
+            -- If trouble breaks after an update, consider this your first suspect.
+            require "plugins.config.trouble"
+        end,
         lazy = true,
     },
     {

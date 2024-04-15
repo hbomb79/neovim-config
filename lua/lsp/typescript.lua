@@ -5,14 +5,6 @@ local prettier_found = #(
     })
 ) ~= 0
 
-
-local angular_found = #(
-    vim.fs.find("angular.json", {
-        upward = true,
-        stop = vim.loop.os_homedir()
-    })
-) ~= 0
-
 require "lsp":set_handler("typescript-tools",
     ---@param client lsp.Client
     function(client, _)
@@ -24,11 +16,6 @@ require "lsp":set_handler("typescript-tools",
 
             client.server_capabilities.documentFormattingProvider = false
             client.server_capabilities.documentRangeFormattingProvider = false
-        end
-
-        if angular_found then
-            vim.notify("Disabling 'renameProvider' for typescript-tools: found 'angular.json'", vim.log.levels.DEBUG)
-            client.server_capabilities.renameProvider = false
         end
 
         return { auto_format = false }

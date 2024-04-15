@@ -10,19 +10,19 @@
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
-    print("lazy.nvim not present... downloading now...")
-    vim.fn.system({
-        "git",
-        "clone",
-        "--filter=blob:none",
-        "https://github.com/folke/lazy.nvim.git",
-        "--branch=stable", -- latest stable release
-        lazypath,
-    })
+	print("lazy.nvim not present... downloading now...")
+	vim.fn.system({
+		"git",
+		"clone",
+		"--filter=blob:none",
+		"https://github.com/folke/lazy.nvim.git",
+		"--branch=stable", -- latest stable release
+		lazypath,
+	})
 end
 vim.opt.rtp:prepend(lazypath)
 
-require "settings"
-require "lsp":initialise()
-require "lazy".setup("plugins")
-require "lang"
+require("settings")
+require("lsp"):initialise()
+require("lazy").setup("plugins")
+require("lang")

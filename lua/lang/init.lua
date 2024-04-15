@@ -1,2 +1,2 @@
-require "lang.sql"
-require "lang.ocaml"
+require("lang.sql")
+require("lang.ocaml")

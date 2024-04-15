@@ -1,1 +1,1 @@
-vim.cmd "autocmd FileType ml setlocal shiftwidth=2 tabstop=2"
+vim.cmd("autocmd FileType ml setlocal shiftwidth=2 tabstop=2")

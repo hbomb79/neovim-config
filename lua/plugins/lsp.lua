@@ -6,7 +6,7 @@ return {
     {
         "neovim/nvim-lspconfig",
         config = function()
-            require "lsp.yaml"
+            -- require "lsp.yaml"
         end
     },
     {
@@ -20,7 +20,7 @@ return {
             'hrsh7th/cmp-path',
             'hrsh7th/cmp-cmdline',
             'hrsh7th/cmp-nvim-lua'
-        }
+        },
     },
     {
         "j-hui/fidget.nvim",
@@ -75,6 +75,7 @@ return {
                     })
                 }
             })
-        end
+        end,
+        lazy = true
     }
 }

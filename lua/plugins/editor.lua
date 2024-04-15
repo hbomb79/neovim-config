@@ -51,9 +51,15 @@ return {
     },
     {
         "folke/trouble.nvim",
+        branch = "dev",
         dependencies = { "nvim-tree/nvim-web-devicons" },
-        config = true,
-        lazy = true
+        opts = {
+            follow = false,
+            focus = true,
+            auto_refresh = false,
+            auto_close = true,
+        },
+        lazy = true,
     },
     {
         "rcarriga/nvim-notify",
@@ -63,16 +69,11 @@ return {
         end
     },
     {
-        "debugloop/telescope-undo.nvim",
-        config = function()
-            require("telescope").load_extension "undo"
-            require "which-key".register({
-                ["u"] = { "<cmd>Telescope undo<CR>", "Undo Tree" }
-            }, { prefix = "<leader>t" })
-        end,
-        dependencies = {
-            "nvim-telescope/telescope.nvim",
-            "folke/which-key.nvim"
-        }
+        "jiaoshijie/undotree",
+        dependencies = "nvim-lua/plenary.nvim",
+        config = true,
+        keys = {
+            { "<leader>u", "<cmd>lua require('undotree').toggle()<cr>" },
+        },
     }
 }

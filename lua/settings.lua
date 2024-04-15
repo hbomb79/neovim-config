@@ -32,7 +32,8 @@ set {
     "completeopt=menu,menuone,noselect",
     "laststatus=3",
     "winbar=%=%m\\ %f",
-    "cmdheight=0"
+    "cmdheight=0",
+    "clipboard+=unnamedplus"
 }
 
 -- Buffer/general options go here
@@ -44,6 +45,7 @@ apply(vim.o, {
     cmdheight = 2,
     mouse = "a",
     splitbelow = true,
+    scrolloff = 10,
     termguicolors = true,
     splitright = true,
     conceallevel = 0,

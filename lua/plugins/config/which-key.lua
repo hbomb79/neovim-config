@@ -1,5 +1,4 @@
 local whichkey = require("which-key")
-local USE_TROUBLE_FOR_LSP_BINDINGS = true
 
 -- Default options are fine
 whichkey.setup {}
@@ -10,28 +9,20 @@ vim.api.nvim_set_keymap('n', '<Space>', '<NOP>', { noremap = true, silent = true
 -- Comments in visual mode
 vim.api.nvim_set_keymap("v", "<leader>/", ":Commentary<CR>", { noremap = true, silent = true })
 
--- Sends LSP list response to QF list, and then
--- opens that list with trouble.nvim and closes the QF list.
-local function lsp_on_list(options)
-    vim.fn.setqflist({}, ' ', options)
-
-    if USE_TROUBLE_FOR_LSP_BINDINGS then
-        require("trouble").open("quickfix")
-        vim.cmd("cclose")
-    end
-end
+-- Window keybinds
+vim.api.nvim_set_keymap("n", "<C-h>", "<C-w>h", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<C-j>", "<C-w>j", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<C-k>", "<C-w>k", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<C-l>", "<C-w>l", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<S-Left>", "<cmd>vertical resize -10<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<S-Right>", "<cmd>vertical resize +10<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<S-Up>", "<cmd>resize +10<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<S-Down>", "<cmd>resize -10<CR>", { noremap = true, silent = true })
 
 -- Configure <leader>-less, normal-mode keymaps
 whichkey.register({
     ["<S-x>"] = { "<cmd>bdelete<CR>", "" },
     K = { "<cmd>lua vim.lsp.buf.hover()<CR>", "LSP Hover" },
-    g = {
-        name = "+LSP",
-        r = { function() vim.lsp.buf.references(nil, { on_list = lsp_on_list }) end, "List References" },
-        i = { function() vim.lsp.buf.implementation { on_list = lsp_on_list } end, "Show Implementations" },
-        d = { function() vim.lsp.buf.definition { on_list = lsp_on_list } end, "Jump to Definition" },
-        D = { function() vim.lsp.buf.declaration { on_list = lsp_on_list } end, "Jump to Declaration" },
-    },
     H = {
         name = "+Hop",
         h = { "<cmd>lua require('hop').hint_words()<CR>", "Global Word" },
@@ -72,10 +63,10 @@ whichkey.register({
         d = { "<cmd>lua require('trouble').open('document_diagnostics')<CR>", "Document" },
         q = { "<cmd>lua require('trouble').open('quickfix')<CR><cmd>cclose<CR>", "Quickfix" },
         l = { "<cmd>lua require('trouble').open('loclist')<CR>", "Loclist" },
-        r = { "<cmd>lua require('trouble').open('lsp_references')<CR>", "References" },
         n = { "<cmd>lua require('trouble').next {}<CR>", "Next" },
         p = { "<cmd>lua require('trouble').previous {}<CR>", "Previous" },
         x = { "<cmd>lua require('trouble').close()<CR>", "Close" },
+        s = { "<cmd>lua require('trouble').open{ mode='symbols', follow=true, auto_refresh=true}<CR>", "Document Symbols" },
     },
     p = {
         name = "+Harpoon",

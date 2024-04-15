@@ -1,3 +1,12 @@
+-- NOTE:
+-- The files in the 'lsp' package are NOT auto-loaded by this
+-- object, or by any other. The initialisation of individual
+-- language servers is done when configuring the plugins
+-- for that language (for example, the gopls LSP configuration
+-- is called when the go.nvim package is loaded [see ../plugins/lang/go.lua]).
+--
+-- In general, the loading of the LSP config for languages can be
+-- found somewhere in the plugins/lang folder.
 local M = {
     initialised = false,
 
@@ -85,10 +94,8 @@ function M:buffer_attach(buffer)
     for _, client in pairs(clients) do
         local attachOptions = nil
         local typeHandler = self.handlers[client.name]
-        print("Client " .. client.name .. " " .. buffer .. " attached, handler type: " .. type(typeHandler))
         if type(typeHandler) == "function" then
             local o = typeHandler(client, buffer)
-            print(o)
             attachOptions = o
         end
 
@@ -165,6 +172,17 @@ function M:common_on_attach(buffer, client, opts)
                 l = { "<cmd>lua vim.diagnostic.open_float()<CR>", "Line Diagnostics" },
             }
         }, { prefix = "<leader>", buffer = buffer })
+
+        require("which-key").register({
+            g = {
+                name = "+LSP",
+                r = { function() require("trouble").open("lsp_references") end, "References" },
+                i = { function() require("trouble").open("lsp_implementations") end, "Implementations" },
+                d = { function() require("trouble").open("lsp_definitions") end, "Definitions" },
+                T = { function() require("trouble").open("lsp_type_definitions") end, "Type Definitions" },
+                D = { function() require("trouble").open("lsp_declarations") end, "Declarations" },
+            },
+        }, { buffer = buffer })
     end
 end
 
@@ -178,8 +196,25 @@ function M:set_handler(lspName, handler)
         error("Cannot set handler for LSP '" .. lspName .. "' as a handler for this LSP is already set")
     end
 
-    vim.notify("Registered '" .. lspName .. "' LSP handler")
+    vim.notify("Registered '" .. lspName .. "' LSP handler", vim.log.levels.DEBUG)
     self.handlers[lspName] = handler
+end
+
+-- There is a bug for when an LSP is lazy-loaded
+-- due to filetype plugin triggering the LSP config after the buffer
+-- has been loaded. This snippet can be called _after_ setup of the LSP
+-- to trigger the 'FileType' event on all the buffers; this will encourage
+-- any new LSPs to attach.
+function M:notify_new_lsp()
+    vim.schedule(function()
+        for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+            local valid = vim.api.nvim_buf_is_valid(bufnr) and vim.bo[bufnr].buflisted
+            if valid and vim.bo[bufnr].buftype == "" then
+                local augroup_lspconfig = vim.api.nvim_create_augroup('lspconfig', { clear = false })
+                vim.api.nvim_exec_autocmds("FileType", { group = augroup_lspconfig, buffer = bufnr })
+            end
+        end
+    end)
 end
 
 return M

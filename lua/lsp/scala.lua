@@ -54,3 +54,4 @@ require "lsp":set_handler('metals', function(_, buffer)
 
     vim.api.nvim_buf_set_keymap(buffer, "v", "K", "<cmd>lua require('metals').type_of_range()<CR>", {})
 end)
+require "lsp":notify_new_lsp()

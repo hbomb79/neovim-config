@@ -5,3 +5,4 @@ require "lspconfig".ocamllsp.setup {
         end
     }
 }
+require "lsp":notify_new_lsp()

@@ -5,6 +5,7 @@ return {
             require("ocaml").update()
             require("ocaml").setup()
             require "lsp.ocaml"
-        end
+        end,
+        ft = { "ocaml" }
     }
 }

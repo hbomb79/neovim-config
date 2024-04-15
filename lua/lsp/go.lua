@@ -1,7 +1,7 @@
 require "lspconfig".gopls.setup {
     cmd = { "gopls", "serve" },
     filetypes = { "go", "gomod" },
-    root_dir = require "lspconfig/util".root_pattern("go.work", "go.mod", ".git"),
+    root_dir = require "lspconfig.util".root_pattern("go.work", "go.mod", ".git"),
     settings = {
         gopls = {
             analyses = {
@@ -12,3 +12,4 @@ require "lspconfig".gopls.setup {
         },
     },
 }
+require "lsp":notify_new_lsp()

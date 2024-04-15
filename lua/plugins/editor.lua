@@ -28,6 +28,20 @@ return {
         config = function() require("plugins.config.which-key") end,
     },
     {
+        "stevearc/conform.nvim",
+        opts = {
+            formatters_by_ft = {
+                lua = { "stylua" },
+                typescript = { { "prettierd", "prettier" } },
+                javascript = { { "prettierd", "prettier" } },
+            },
+            format_on_save = {
+                timeout_ms = 500,
+                lsp_fallback = true,
+            },
+        }
+    },
+    {
         "nvim-neo-tree/neo-tree.nvim",
         opts = {
             close_if_last_window = true,

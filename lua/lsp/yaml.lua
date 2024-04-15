@@ -1,5 +1,5 @@
 require "lsp":set_handler("spectral", function(_, _)
-    return { auto_hover = false, auto_format = false }
+    return { auto_hover = false }
 end)
 
 require "lspconfig".spectral.setup {}

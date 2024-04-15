@@ -34,7 +34,7 @@ require "lsp":set_handler('angularls',
             ["T"] = { "<CMD>lua require('ng').get_template_tcb()<CR>", "Get template TCB" },
         }, { prefix = "<leader>a", buffer = buffer })
 
-        return { auto_format = false, auto_hover = false, whichkey_binding = true }
+        return { auto_hover = false, whichkey_binding = true }
     end)
 
 require 'lspconfig'.angularls.setup {

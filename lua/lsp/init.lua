@@ -123,7 +123,6 @@ end
 -- It should be expected that this code could be run multiple times for the
 -- same buffer, and so the code in here should be aware of that.
 ---@class AttachOptions
----@field auto_format boolean?
 ---@field auto_hover boolean?
 ---@field whichkey_binding boolean?
 ---@param opts AttachOptions?
@@ -133,15 +132,7 @@ function M:common_on_attach(buffer, client, opts)
         vim.log.levels.TRACE
     )
 
-    opts = opts or { auto_format = true, auto_hover = true, whichkey_binding = true }
-    if getOptionValue(opts, "auto_format", true) then
-        -- Format on save using the connected LSP, if possible.
-        vim.api.nvim_create_autocmd("BufWritePre", {
-            buffer = buffer,
-            callback = function() vim.lsp.buf.format() end,
-        })
-    end
-
+    opts = opts or { auto_hover = true, whichkey_binding = true }
     if getOptionValue(opts, "auto_hover", true) then
         -- Clear any hover-effects when the cusor moves
         vim.api.nvim_create_autocmd("CursorMoved", {

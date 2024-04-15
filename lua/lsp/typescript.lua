@@ -18,7 +18,7 @@ require "lsp":set_handler("typescript-tools",
             client.server_capabilities.documentRangeFormattingProvider = false
         end
 
-        return { auto_format = false }
+        return {}
     end
 )
 

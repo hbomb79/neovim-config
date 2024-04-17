@@ -152,6 +152,7 @@ function M:common_on_attach(buffer, client, opts)
 			l = {
 				name = "+LSP",
 				a = { "<cmd>lua vim.lsp.buf.code_action()<CR>", "Code Action" },
+				A = { "<cmd>lua vim.lsp.codelens.run()<CR>", "Code Lens" },
 				d = { "<cmd>Telescope diagnostics<CR>", "Document Diagnostics" },
 				s = { "<cmd>Telescope lsp_document_symbols<CR>", "Document Symbols" },
 				S = { "<cmd>Telescope lsp_workspace_symbols<CR>", "Workspace Symbols" },

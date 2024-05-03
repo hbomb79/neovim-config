@@ -79,8 +79,11 @@ return {
 		dependencies = "nvim-lua/plenary.nvim",
 		config = true,
 		keys = {
-			{ "<leader>u", "<cmd>lua require('undotree').toggle()<cr>" },
+			{ "<leader>u", "<cmd>lua require('undotree').toggle()<cr>", "Toggle undo tree" },
 		},
+	},
+	{
+		"tris203/precognition.nvim",
 	},
 	{
 		"kevinhwang91/nvim-bqf",
@@ -97,6 +100,12 @@ return {
 		config = true,
 	},
 	{
-		"tris203/precognition.nvim",
+		"kylechui/nvim-surround",
+		version = "*",
+		keys = { "ys", "ds", "cs" },
+		config = function()
+			-- Configuration here, or leave empty to use defaults
+			require("nvim-surround").setup({})
+		end,
 	},
 }

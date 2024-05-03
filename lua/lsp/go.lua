@@ -8,7 +8,8 @@ require("lspconfig").gopls.setup({
 				unusedparams = true,
 			},
 			staticcheck = true,
-			gofumpt = true,
+			-- TODO: find a way to set this dynamically based on the project I am in.
+			-- gofumpt = true,
 		},
 	},
 })

@@ -1,3 +1,7 @@
+-- Base keybindings, which rely on WhichKey to configure.
+-- For keybindingd which are tightly coupled to a specific plugin, you'll
+-- find those bindings in that specific plugins configuration.
+
 local whichkey = require("which-key")
 
 -- Default options are fine
@@ -5,9 +9,6 @@ whichkey.setup({})
 
 -- Set leader
 vim.api.nvim_set_keymap("n", "<Space>", "<NOP>", { noremap = true, silent = true })
-
--- Comments in visual mode
-vim.api.nvim_set_keymap("v", "<leader>/", ":Commentary<CR>", { noremap = true, silent = true })
 
 -- Window keybinds
 vim.api.nvim_set_keymap("n", "<C-h>", "<C-w>h", { noremap = true, silent = true })
@@ -42,17 +43,34 @@ whichkey.register({
 	["E"] = { "<cmd>Neotree reveal<CR>", "Reveal file in Tree" },
 	["f"] = { "<cmd>Telescope find_files<CR>", "Find File" },
 	[";"] = { "<cmd>Dashboard<CR>", "Open Dashboard" },
+	q = {
+		name = "+Quickfix",
+		q = { "<cmd>copen<CR>", "Open" },
+		x = { "<cmd>cclose<CR>", "Close" },
+		n = { "<cmd>cnext<CR>", "Next" },
+		p = { "<cmd>cprevious<CR>", "Previous" },
+	},
 	g = {
 		name = "+Git",
-		j = { "<cmd>NextHunk<CR>", "Next Hunk" },
-		k = { "<cmd>PrevHunk<CR>", "Prev Hunk" },
-		p = { "<cmd>PreviewHunk<CR>", "Preview Hunk" },
-		r = { "<cmd>ResetHunk<CR>", "Reset Hunk" },
-		R = { "<cmd>ResetBuffer<CR>", "Reset Buffer" },
-		s = { "<cmd>StageHunk<CR>", "Stage Hunk" },
-		u = { "<cmd>UndoStageHunk<CR>", "Undo Stage Hunk" },
-		o = { "<cmd>Telescope git_status<CR>", "Open changed file" },
+		j = { "<cmd>Gitsigns next_hunk<CR>", "Next Hunk" },
+		k = { "<cmd>Gitsigns prev_hunk<CR>", "Prev Hunk" },
+		P = { "<cmd>Gitsigns preview_hunk<CR>", "Preview Hunk" },
+		p = { "<cmd>Gitsigns preview_hunk_inline<CR>", "Preview Hunk Inline" },
+		r = { "<cmd>Gitsigns reset_hunk<CR>", "Reset Hunk" },
+		R = { "<cmd>Gitsigns reset_buffer<CR>", "Reset Buffer" },
+		s = { "<cmd>Gitsigns stage_hunk<CR>", "Stage Hunk" },
+		u = { "<cmd>Gitsigns undo_stage_hunk<CR>", "Undo Stage Hunk" },
+		d = {
+			"+Diff",
+			d = { "<CMD>DiffviewOpen ORIG_HEAD<CR>", "Diff working tree" },
+			m = { "<CMD>DiffviewOpen master<CR>", "Diff with master" },
+			h = { "<CMD>DiffviewFileHistory %<CR>", "File commit history" },
+			H = { "<CMD>DiffviewFileHistory<CR>", "Full commit history" },
+			x = { "<CMD>DiffviewClose<CR>", "Close" },
+		},
+		o = { "<cmd>Telescope git_status<CR>", "Git status" },
 		b = { "<cmd>Telescope git_branches<CR>", "Checkout branch" },
+		B = { "<cmd>GitBlameToggle<CR>", "Toggle Blame" },
 		c = { "<cmd>Telescope git_commits<CR>", "Checkout commit" },
 		C = { "<cmd>Telescope git_bcommits<CR>", "Checkout commit(for current file)" },
 	},
@@ -106,3 +124,12 @@ whichkey.register({
 	--     s = { "<cmd>DebugStart<CR>", "Start" }
 	-- },
 }, { prefix = "<leader>" })
+
+-- Configure visual-mode leader-based mappings
+whichkey.register({
+	["/"] = { "<CMD>Commentary<CR>", "Toggle Comment" },
+	g = {
+		name = "+Git",
+		d = { "<CMD>DiffviewFileHistory<CR>", "Range Git History" },
+	},
+}, { prefix = "<leader>", mode = "v" })

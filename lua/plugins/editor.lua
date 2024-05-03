@@ -68,26 +68,6 @@ return {
 		lazy = true,
 	},
 	{
-		"folke/trouble.nvim",
-		branch = "dev",
-		dependencies = { "nvim-tree/nvim-web-devicons" },
-		opts = {
-			follow = false,
-			focus = true,
-			auto_refresh = false,
-			auto_close = true,
-		},
-		config = function(_, opts)
-			require("trouble").setup(opts)
-
-			-- WARN this is fragile code which is designed to de-duplicate
-			-- multiple items which reference the same location.
-			-- If trouble breaks after an update, consider this your first suspect.
-			require("plugins.config.trouble")
-		end,
-		lazy = true,
-	},
-	{
 		"rcarriga/nvim-notify",
 		config = function()
 			vim.notify = require("notify")
@@ -101,5 +81,22 @@ return {
 		keys = {
 			{ "<leader>u", "<cmd>lua require('undotree').toggle()<cr>" },
 		},
+	},
+	{
+		"kevinhwang91/nvim-bqf",
+		dependencies = {
+			"ibhagwan/fzf-lua",
+		},
+	},
+	{
+		"ibhagwan/fzf-lua",
+		dependencies = {
+			"nvim-tree/nvim-web-devicons",
+			{ "junegunn/fzf", build = "./install --bin" },
+		},
+		config = true,
+	},
+	{
+		"tris203/precognition.nvim",
 	},
 }

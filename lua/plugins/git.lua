@@ -7,6 +7,15 @@ return {
 	},
 	{
 		"sindrets/diffview.nvim",
-		cmd = "DiffviewOpen",
+		cmd = { "DiffviewOpen", "DiffviewFileHistory" },
+		dependencies = {
+			"folke/which-key.nvim",
+		},
+		config = function()
+			vim.opt.fillchars:append({ diff = "┈" })
+			require("diffview").setup({ enhanced_diff_hl = true })
+
+			vim.api.nvim_set_keymap("v", "<leader>gd", ":DiffviewFileHistory<CR>", { noremap = true, silent = true })
+		end,
 	},
 }

@@ -170,31 +170,36 @@ function M:common_on_attach(buffer, client, opts)
 				name = "+LSP",
 				r = {
 					function()
-						require("trouble").open("lsp_references")
+						vim.lsp.buf.references()
+						-- require("trouble").open("lsp_references")
 					end,
 					"References",
 				},
 				i = {
 					function()
-						require("trouble").open("lsp_implementations")
+						vim.lsp.buf.implementation()
+						-- require("trouble").open("lsp_implementations")
 					end,
 					"Implementations",
 				},
 				d = {
 					function()
-						require("trouble").open("lsp_definitions")
+						vim.lsp.buf.definition()
+						-- require("trouble").open("lsp_definitions")
 					end,
 					"Definitions",
 				},
 				T = {
 					function()
-						require("trouble").open("lsp_type_definitions")
+						vim.lsp.buf.type_definition()
+						-- require("trouble").open("lsp_type_definitions")
 					end,
 					"Type Definitions",
 				},
 				D = {
 					function()
-						require("trouble").open("lsp_declarations")
+						vim.lsp.buf.declaration()
+						-- require("trouble").open("lsp_declarations")
 					end,
 					"Declarations",
 				},

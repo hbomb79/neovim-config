@@ -22,6 +22,36 @@ return {
 			"hrsh7th/cmp-nvim-lua",
 		},
 	},
+	-- {
+	-- 	"ray-x/navigator.lua",
+	-- 	config = true,
+	-- 	opts = { mason = true },
+	-- 	dependencies = {
+	-- 		{ "ray-x/guihua.lua", build = "cd lua/fzy && make" },
+	-- 		{ "neovim/nvim-lspconfig" },
+	-- 		{ "williamboman/mason-lspconfig.nvim" },
+	-- 	},
+	-- },
+	-- {
+	-- 	"folke/trouble.nvim",
+	-- 	branch = "dev",
+	-- 	dependencies = { "nvim-tree/nvim-web-devicons" },
+	-- 	opts = {
+	-- 		follow = false,
+	-- 		focus = true,
+	-- 		auto_refresh = false,
+	-- 		auto_close = true,
+	-- 	},
+	-- 	config = function(_, opts)
+	-- 		require("trouble").setup(opts)
+
+	-- 		-- WARN this is fragile code which is designed to de-duplicate
+	-- 		-- multiple items which reference the same location.
+	-- 		-- If trouble breaks after an update, consider this your first suspect.
+	-- 		require("plugins.config.trouble")
+	-- 	end,
+	-- 	lazy = true,
+	-- },
 	{
 		"j-hui/fidget.nvim",
 		tag = "legacy",

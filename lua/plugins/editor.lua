@@ -103,9 +103,7 @@ return {
 		"kylechui/nvim-surround",
 		version = "*",
 		keys = { "ys", "ds", "cs" },
-		config = function()
-			-- Configuration here, or leave empty to use defaults
-			require("nvim-surround").setup({})
-		end,
+		dependencies = { "nvim-treesitter/nvim-treesitter-textobjects" },
+		config = true,
 	},
 }

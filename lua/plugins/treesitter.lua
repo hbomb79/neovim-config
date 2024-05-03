@@ -33,4 +33,9 @@ return {
 		dependencies = { "nvim-treesitter/nvim-treesitter" },
 		cmd = "TSPlaygroundToggle",
 	},
+	{
+		"nvim-treesitter/nvim-treesitter-textobjects",
+		dependencies = { "nvim-treesitter/nvim-treesitter" },
+		config = true,
+	},
 }

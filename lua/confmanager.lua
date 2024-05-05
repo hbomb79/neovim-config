@@ -23,8 +23,6 @@ vim.fn.jobstart({ "git", "fetch" }, {
 						is_behind = true
 					end
 				end
-
-				vim.notify("Saw data: " .. tostring(data) .. ", is_behind: " .. tostring(is_behind))
 			end,
 			on_exit = function(_, revexitcode, _)
 				if revexitcode ~= 0 then
@@ -32,13 +30,13 @@ vim.fn.jobstart({ "git", "fetch" }, {
 						"Failed to check for config updates: git rev-list failed: exit code: " .. tostring(revexitcode),
 						vim.log.levels.ERROR
 					)
+
+					return
 				end
 
 				if is_behind then
 					vim.notify(
-						"Neovim config is outdated! Please update your config by running `git pull` in your config dir ("
-							.. CONF_DIR
-							.. ").",
+						"Neovim config is outdated! Please update your config by running `:lua UpdateConfig()`",
 						vim.log.levels.WARN
 					)
 				else
@@ -48,3 +46,19 @@ vim.fn.jobstart({ "git", "fetch" }, {
 		})
 	end,
 })
+
+function UpdateConfig()
+	vim.notify("Updating config... Please wait...", vim.log.levels.INFO)
+
+	vim.fn.jobstart({ "git", "pull" }, {
+		cwd = CONF_DIR,
+		on_exit = function(_, exitcode, _)
+			if exitcode ~= 0 then
+				vim.notify("Failed to git pull, exit code: " .. tostring(exitcode), vim.log.levels.ERROR)
+				return
+			end
+
+			vim.notify("Config updated!", vim.log.levels.INFO)
+		end,
+	})
+end

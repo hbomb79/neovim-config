@@ -26,3 +26,5 @@ require("settings")
 require("lsp"):initialise()
 require("lazy").setup("plugins")
 require("lang")
+
+require("confmanager")

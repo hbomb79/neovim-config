@@ -71,10 +71,8 @@ whichkey.register({
 			x = { "<CMD>DiffviewClose<CR>", "Close" },
 		},
 		o = { "<cmd>Telescope git_status<CR>", "Git status" },
-		b = { "<cmd>Telescope git_branches<CR>", "Checkout branch" },
-		B = { "<cmd>GitBlameToggle<CR>", "Toggle Blame" },
-		c = { "<cmd>Telescope git_commits<CR>", "Checkout commit" },
-		C = { "<cmd>Telescope git_bcommits<CR>", "Checkout commit(for current file)" },
+		c = { "<cmd>Telescope git_branches<CR>", "Checkout branch" },
+		b = { "<cmd>GitBlameToggle<CR>", "Toggle Blame" },
 	},
 	t = {
 		name = "+Diagnostics",

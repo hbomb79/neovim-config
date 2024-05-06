@@ -27,9 +27,11 @@ return {
 			{
 				"nvim-treesitter/nvim-treesitter-context",
 				config = true,
+				lazy = false,
 			},
 		},
 		build = ":TSUpdate",
+		lazy = false,
 	},
 	{
 		"andymass/vim-matchup",

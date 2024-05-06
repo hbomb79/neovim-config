@@ -3,6 +3,7 @@ return {
 		theme = "catppuccin",
 		component_separators = "",
 		section_separators = { left = "", right = "" },
+		ignore_focus = { "neo-tree" },
 	},
 	sections = {
 		lualine_a = { { "mode", separator = { left = "" }, right_padding = 2 } },

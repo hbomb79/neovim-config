@@ -3,7 +3,25 @@ return {
 		"nvim-treesitter/nvim-treesitter",
 		config = function()
 			---@diagnostic disable-next-line: missing-fields
-			require("nvim-treesitter.configs").setup({ highlight = { enable = true } })
+			require("nvim-treesitter.configs").setup({
+				ensure_installed = {
+					"go",
+					"scala",
+					"ocaml",
+					"angular",
+					"typescript",
+					"javascript",
+					"css",
+					"scss",
+					"markdown",
+					"html",
+					"lua",
+					"luadoc",
+					"gitcommit",
+				},
+				auto_install = true,
+				highlight = { enable = true },
+			})
 		end,
 		dependencies = {
 			{

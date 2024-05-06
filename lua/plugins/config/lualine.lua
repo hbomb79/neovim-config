@@ -4,6 +4,7 @@ return {
 		component_separators = "",
 		section_separators = { left = "", right = "" },
 		ignore_focus = { "neo-tree" },
+		globalstatus = true,
 	},
 	sections = {
 		lualine_a = { { "mode", separator = { left = "" }, right_padding = 2 } },

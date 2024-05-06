@@ -127,9 +127,9 @@ whichkey.register({
 
 -- Configure visual-mode leader-based mappings
 whichkey.register({
-	["/"] = { "<CMD>Commentary<CR>", "Toggle Comment" },
+	["/"] = { ":Commentary<CR>", "Toggle Comment" },
 	g = {
 		name = "+Git",
-		d = { "<CMD>DiffviewFileHistory<CR>", "Range Git History" },
+		d = { ":DiffviewFileHistory<CR>", "Range Git History" },
 	},
 }, { prefix = "<leader>", mode = "v" })

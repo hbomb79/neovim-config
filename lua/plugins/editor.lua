@@ -16,14 +16,9 @@ return {
 		lazy = true,
 	},
 	{
-		"freddiehaddad/feline.nvim",
-		dependencies = {
-			"nvim-tree/nvim-web-devicons",
-			"catppuccin",
-		},
-		opts = function()
-			return require("plugins.config.feline")
-		end,
+		"nvim-lualine/lualine.nvim",
+		dependencies = { "nvim-tree/nvim-web-devicons" },
+		opts = require("plugins.config.lualine"),
 	},
 	{
 		"folke/which-key.nvim",
@@ -69,6 +64,7 @@ return {
 	},
 	{
 		"rcarriga/nvim-notify",
+		priority = 1000,
 		config = function()
 			vim.notify = require("notify")
 			vim.notify_once = require("notify")

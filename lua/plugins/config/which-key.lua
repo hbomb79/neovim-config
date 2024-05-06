@@ -62,8 +62,8 @@ whichkey.register({
 		u = { "<cmd>Gitsigns undo_stage_hunk<CR>", "Undo Stage Hunk" },
 		d = {
 			"+Diff",
-			d = { "<CMD>DiffviewOpen ORIG_HEAD<CR>", "Diff working tree" },
-			m = { "<CMD>DiffviewOpen master<CR>", "Diff with master" },
+			d = { "<CMD>DiffviewOpen<CR>", "Diff working tree" },
+			o = { "<CMD>DiffviewOpen origin/HEAD<CR>", "Diff with origin" },
 			h = { "<CMD>DiffviewFileHistory %<CR>", "File commit history" },
 			H = { "<CMD>DiffviewFileHistory<CR>", "Full commit history" },
 			x = { "<CMD>DiffviewClose<CR>", "Close" },

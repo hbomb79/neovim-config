@@ -19,6 +19,13 @@ return {
 					nvimtree = true,
 					treesitter = true,
 					notify = true,
+					fidget = true,
+					harpoon = true,
+					hop = true,
+					mason = true,
+					gitgutter = true,
+					telescope = true,
+					which_key = true,
 				},
 			})
 

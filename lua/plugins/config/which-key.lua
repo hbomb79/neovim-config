@@ -50,10 +50,10 @@ whichkey.register({
 		n = { "<cmd>cnext<CR>", "Next" },
 		p = { "<cmd>cprevious<CR>", "Previous" },
 	},
-	G = { "<cmd>botright G|20wincmd _<CR>", "Open Fugitive" },
+	G = { ":Neogit<CR>", "Neogit" },
 	g = {
 		name = "+Git",
-		g = { "<cmd>botright G|20wincmd _<CR>", "Open Fugitive" },
+		g = { ":Neogit<CR>", "Neogit" },
 		j = { "<cmd>Gitsigns next_hunk<CR>", "Next Hunk" },
 		k = { "<cmd>Gitsigns prev_hunk<CR>", "Prev Hunk" },
 		P = { "<cmd>Gitsigns preview_hunk<CR>", "Preview Hunk" },

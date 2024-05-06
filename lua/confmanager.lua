@@ -2,7 +2,7 @@
 -- with the origin.
 local CONF_DIR = vim.fn.expand("$HOME/.config/nvim/")
 
-vim.fn.jobstart({ "lua/bin/check-update.sh" }, {
+vim.fn.jobstart({ CONF_DIR .. "lua/bin/check-update.sh" }, {
 	cwd = CONF_DIR,
 	on_exit = function(_, fetchexitcode, _)
 		if fetchexitcode ~= 0 and fetchexitcode ~= 1 then
@@ -26,7 +26,7 @@ vim.fn.jobstart({ "lua/bin/check-update.sh" }, {
 function UpdateConfig()
 	vim.notify("Updating config... Please wait...", vim.log.levels.INFO)
 
-	vim.fn.jobstart({ "lua/bin/do-update.sh" }, {
+	vim.fn.jobstart({ CONF_DIR .. "lua/bin/do-update.sh" }, {
 		cwd = CONF_DIR,
 		on_exit = function(_, exitcode, _)
 			if exitcode ~= 0 then

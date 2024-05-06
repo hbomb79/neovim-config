@@ -23,6 +23,10 @@ vim.api.nvim_set_keymap("n", "<S-Down>", "<cmd>resize -10<CR>", { noremap = true
 -- Configure <leader>-less, normal-mode keymaps
 whichkey.register({
 	["<S-x>"] = { "<cmd>bdelete<CR>", "" },
+	["[d"] = { "<cmd>lua vim.diagnostic.goto_prev()<CR>", "Prev Diagnostic" },
+	["]d"] = { "<cmd>lua vim.diagnostic.goto_next()<CR>", "Next Diagnostic" },
+	["[;"] = { "<cmd>cprevious<CR>", "Prev Quickfix" },
+	["];"] = { "<cmd>cnext<CR>", "Next Quickfix" },
 	K = { "<cmd>lua vim.lsp.buf.hover()<CR>", "LSP Hover" },
 	H = {
 		name = "+Hop",
@@ -74,21 +78,21 @@ whichkey.register({
 		c = { "<cmd>Telescope git_branches<CR>", "Checkout branch" },
 		b = { "<cmd>GitBlameToggle<CR>", "Toggle Blame" },
 	},
-	t = {
-		name = "+Diagnostics",
-		t = { "<cmd>lua require('trouble').open()<CR>", "Open" },
-		w = { "<cmd>lua require('trouble').open('workspace_diagnostics')<CR>", "Workspace" },
-		d = { "<cmd>lua require('trouble').open('document_diagnostics')<CR>", "Document" },
-		q = { "<cmd>lua require('trouble').open('quickfix')<CR><cmd>cclose<CR>", "Quickfix" },
-		l = { "<cmd>lua require('trouble').open('loclist')<CR>", "Loclist" },
-		n = { "<cmd>lua require('trouble').next {}<CR>", "Next" },
-		p = { "<cmd>lua require('trouble').previous {}<CR>", "Previous" },
-		x = { "<cmd>lua require('trouble').close()<CR>", "Close" },
-		s = {
-			"<cmd>lua require('trouble').open{ mode='symbols', follow=true, auto_refresh=true}<CR>",
-			"Document Symbols",
-		},
-	},
+	-- t = {
+	-- 	name = "+Diagnostics",
+	-- 	t = { "<cmd>lua require('trouble').open()<CR>", "Open" },
+	-- 	w = { "<cmd>lua require('trouble').open('workspace_diagnostics')<CR>", "Workspace" },
+	-- 	d = { "<cmd>lua require('trouble').open('document_diagnostics')<CR>", "Document" },
+	-- 	q = { "<cmd>lua require('trouble').open('quickfix')<CR><cmd>cclose<CR>", "Quickfix" },
+	-- 	l = { "<cmd>lua require('trouble').open('loclist')<CR>", "Loclist" },
+	-- 	n = { "<cmd>lua require('trouble').next {}<CR>", "Next" },
+	-- 	p = { "<cmd>lua require('trouble').previous {}<CR>", "Previous" },
+	-- 	x = { "<cmd>lua require('trouble').close()<CR>", "Close" },
+	-- 	s = {
+	-- 		"<cmd>lua require('trouble').open{ mode='symbols', follow=true, auto_refresh=true}<CR>",
+	-- 		"Document Symbols",
+	-- 	},
+	-- },
 	p = {
 		name = "+Harpoon",
 		a = { "<cmd>lua require('harpoon.mark').add_file()<CR>", "Add file" },

@@ -40,7 +40,7 @@ vim.fn.jobstart({ "git", "fetch" }, {
 						vim.log.levels.WARN
 					)
 				else
-					vim.notify("Neovim config is up-to-date!", vim.log.levels.INFO)
+					vim.notify("Neovim config is up-to-date!", vim.log.levels.TRACE)
 				end
 			end,
 		})

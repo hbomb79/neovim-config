@@ -8,6 +8,5 @@ return {
 			"nvim-telescope/telescope-project.nvim",
 		},
 		cmd = "Telescope",
-		lazy = true,
 	},
 }

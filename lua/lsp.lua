@@ -1,12 +1,3 @@
--- NOTE:
--- The files in the 'lsp' package are NOT auto-loaded by this
--- object, or by any other. The initialisation of individual
--- language servers is done when configuring the plugins
--- for that language (for example, the gopls LSP configuration
--- is called when the go.nvim package is loaded [see ../plugins/lang/go.lua]).
---
--- In general, the loading of the LSP config for languages can be
--- found somewhere in the plugins/lang folder.
 local M = {
 	initialised = false,
 

@@ -1,13 +1,20 @@
 return {
 	{
-		"williamboman/mason.nvim",
-		config = true,
-	},
-	{
 		"neovim/nvim-lspconfig",
-		config = function()
-			-- require "lsp.yaml"
-		end,
+		{
+			"williamboman/mason.nvim",
+			config = true,
+			dependencies = { "williamboman/mason-lspconfig.nvim" },
+		},
+		{
+			"williamboman/mason-lspconfig.nvim",
+			opts = { automatic_installation = true },
+			config = true,
+		},
+		-- Ensure both mason and mason-lspconfig are loaded BEFORE we do any language/LSP setup by disabling lazy.
+		-- This is basically the case anyway due to the lazy loading of the lang plugins based on filetype
+		lazy = false,
+		priority = 1000,
 	},
 	{
 		"hrsh7th/nvim-cmp",
@@ -22,60 +29,49 @@ return {
 			"hrsh7th/cmp-nvim-lua",
 		},
 	},
-	-- {
-	-- 	"ray-x/navigator.lua",
-	-- 	config = true,
-	-- 	opts = { mason = true },
-	-- 	dependencies = {
-	-- 		{ "ray-x/guihua.lua", build = "cd lua/fzy && make" },
-	-- 		{ "neovim/nvim-lspconfig" },
-	-- 		{ "williamboman/mason-lspconfig.nvim" },
-	-- 	},
-	-- },
-	-- {
-	-- 	"folke/trouble.nvim",
-	-- 	branch = "dev",
-	-- 	dependencies = { "nvim-tree/nvim-web-devicons" },
-	-- 	opts = {
-	-- 		follow = false,
-	-- 		focus = true,
-	-- 		auto_refresh = false,
-	-- 		auto_close = true,
-	-- 	},
-	-- 	config = function(_, opts)
-	-- 		require("trouble").setup(opts)
-
-	-- 		-- WARN this is fragile code which is designed to de-duplicate
-	-- 		-- multiple items which reference the same location.
-	-- 		-- If trouble breaks after an update, consider this your first suspect.
-	-- 		require("plugins.config.trouble")
-	-- 	end,
-	-- 	lazy = true,
-	-- },
 	{
 		"j-hui/fidget.nvim",
 		tag = "legacy",
 		event = "LspAttach",
-		opts = {
-			text = {
-				spinner = "arc",
-			},
-		},
+		opts = { text = { spinner = "arc" } },
 	},
 	{
 		"ray-x/lsp_signature.nvim",
 		event = "VeryLazy",
 		opts = { hint_enable = false },
 	},
-	-- {
-	--     "folke/noice.nvim",
-	--     opts = {}
-	-- }
 	{
 		"mfussenegger/nvim-lint",
 		config = function()
-			require("plugins.config.nvim-lint")
+			require("lint").linters_by_ft = { go = { "golangcilint" } }
+			vim.api.nvim_create_autocmd({ "BufWinEnter", "BufWritePost" }, {
+				callback = function()
+					require("lint").try_lint()
+				end,
+			})
 		end,
+	},
+	{
+		"stevearc/conform.nvim",
+		dependencies = {
+			{
+				-- Auto install formatters if not present, must be loaded AFTER conform (which itself must be loaded AFTER mason.nvim).
+				"zapling/mason-conform.nvim",
+				lazy = false,
+				config = true,
+			},
+		},
+		opts = {
+			formatters_by_ft = {
+				lua = { "stylua" },
+				typescript = { { "prettierd", "prettier" } },
+				javascript = { { "prettierd", "prettier" } },
+			},
+			format_on_save = {
+				timeout_ms = 500,
+				lsp_fallback = true,
+			},
+		},
 	},
 	{
 		"nvim-neotest/neotest",

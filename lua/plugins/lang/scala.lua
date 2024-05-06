@@ -3,7 +3,8 @@ return {
 		"scalameta/nvim-metals",
 		ft = { "scala", "sbt" },
 		config = function()
-			require("lsp.scala")
+			require("nvim-treesitter.install").ensure_installed_sync("scala")
+			require("plugins.config.lsp.scala")
 		end,
 	},
 }

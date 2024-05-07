@@ -36,7 +36,7 @@ set({
 	"completeopt=menu,menuone,noselect",
 	"laststatus=3",
 	"winbar=%=%m\\ %f",
-	"cmdheight=0",
+	"cmdheight=1",
 	"clipboard+=unnamedplus",
 })
 
@@ -46,7 +46,6 @@ apply(vim.o, {
 	title = false,
 	pumheight = 10,
 	fileencoding = "utf-8",
-	cmdheight = 2,
 	mouse = "a",
 	splitbelow = true,
 	scrolloff = 10,

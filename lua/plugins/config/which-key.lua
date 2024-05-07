@@ -78,6 +78,15 @@ whichkey.register({
 		c = { "<cmd>Telescope git_branches<CR>", "Checkout branch" },
 		b = { "<cmd>GitBlameToggle<CR>", "Toggle Blame" },
 	},
+	t = {
+		name = "+Testing",
+		t = { "<cmd>lua require('neotest').summary.toggle()<CR>", "Toggle summary" },
+		s = { "<cmd>lua require('neotest').run.run()<CR>", "Run single test" },
+		f = { "<cmd>lua require('neotest').run.run(vim.fn.expand('%'))<CR>", "Run file tests" },
+		F = { "<cmd>lua require('neotest').watch.toggle(vim.fn.expand('%'))<CR>", "Toggle file watch" },
+		a = { "<cmd>lua require('neotest').run.attach(require('neotest').run.get_last_run())<CR>", "Attach to tests" },
+		o = { "<cmd>lua require('neotest').output.open()<CR>", "Test output" },
+	},
 	-- t = {
 	-- 	name = "+Diagnostics",
 	-- 	t = { "<cmd>lua require('trouble').open()<CR>", "Open" },

@@ -3,7 +3,7 @@ return {
 		theme = "catppuccin",
 		component_separators = "",
 		section_separators = { left = "", right = "" },
-		ignore_focus = { "neo-tree", "NeogitStatus" },
+		ignore_focus = { "neo-tree", "NeogitStatus", "neotest-summary" },
 		globalstatus = true,
 	},
 	sections = {

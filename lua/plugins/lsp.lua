@@ -76,15 +76,20 @@ return {
 	{
 		"nvim-neotest/neotest",
 		dependencies = {
+			"nvim-neotest/nvim-nio",
 			"nvim-lua/plenary.nvim",
 			"nvim-treesitter/nvim-treesitter",
 			"antoinemadec/FixCursorHold.nvim",
 			"stevanmilic/neotest-scala",
+			"akinsho/neotest-go",
 		},
 		config = function()
 			---@diagnostic disable-next-line: missing-fields
 			require("neotest").setup({
 				adapters = {
+					require("neotest-go")({
+						args = { "-count=1" }, --cache busting
+					}),
 					require("neotest-scala")({
 						-- Command line arguments for runner
 						-- Can also be a function to return dynamic values

@@ -8,7 +8,7 @@ return {
 		},
 		{
 			"williamboman/mason-lspconfig.nvim",
-			opts = { automatic_installation = true },
+			opts = { automatic_installation = { exclude = { "gopls", "rust_analyzer" } } },
 			config = true,
 		},
 		-- Ensure both mason and mason-lspconfig are loaded BEFORE we do any language/LSP setup by disabling lazy.

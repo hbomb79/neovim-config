@@ -21,14 +21,26 @@ vim.api.nvim_set_keymap("n", "<S-Up>", "<cmd>resize +10<CR>", { noremap = true, 
 vim.api.nvim_set_keymap("n", "<S-Down>", "<cmd>resize -10<CR>", { noremap = true, silent = true })
 
 -- Configure <leader>-less, normal-mode keymaps
+-- Make jump mappings repeatable using ; and ,
+local gs = require("gitsigns")
+local ts_repeat_move = require("nvim-treesitter.textobjects.repeatable_move")
+local next_hunk_repeat, prev_hunk_repeat = ts_repeat_move.make_repeatable_move_pair(gs.next_hunk, gs.prev_hunk)
+local next_diag_repeat, prev_diag_repeat =
+	ts_repeat_move.make_repeatable_move_pair(vim.diagnostic.goto_next, vim.diagnostic.goto_next)
+local next_qf_repeat, prev_qf_repeat = ts_repeat_move.make_repeatable_move_pair(function()
+	vim.cmd("cnext")
+end, function()
+	vim.cmd("cprevious")
+end)
+
 whichkey.register({
-	["<S-x>"] = { "<cmd>bdelete<CR>", "" },
-	["[d"] = { "<cmd>lua vim.diagnostic.goto_prev()<CR>", "Prev Diagnostic" },
-	["]d"] = { "<cmd>lua vim.diagnostic.goto_next()<CR>", "Next Diagnostic" },
-	["[;"] = { "<cmd>cprevious<CR>", "Prev Quickfix" },
-	["];"] = { "<cmd>cnext<CR>", "Next Quickfix" },
-	["]h"] = { "<cmd>Gitsigns next_hunk<CR>", "Next Hunk" },
-	["[h"] = { "<cmd>Gitsigns prev_hunk<CR>", "Prev Hunk" },
+	["<S-x>"] = { "<cmd>bdelete<CR>" },
+	["[d"] = { prev_diag_repeat, "Prev Diagnostic" },
+	["]d"] = { next_diag_repeat, "Next Diagnostic" },
+	["[;"] = { prev_qf_repeat, "Prev Quickfix" },
+	["];"] = { next_qf_repeat, "Next Quickfix" },
+	["]h"] = { next_hunk_repeat, "Next Hunk" },
+	["[h"] = { prev_hunk_repeat, "Prev Hunk" },
 	K = { "<cmd>lua vim.lsp.buf.hover()<CR>", "LSP Hover" },
 	H = {
 		name = "+Hop",

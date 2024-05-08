@@ -27,6 +27,8 @@ whichkey.register({
 	["]d"] = { "<cmd>lua vim.diagnostic.goto_next()<CR>", "Next Diagnostic" },
 	["[;"] = { "<cmd>cprevious<CR>", "Prev Quickfix" },
 	["];"] = { "<cmd>cnext<CR>", "Next Quickfix" },
+	["]h"] = { "<cmd>Gitsigns next_hunk<CR>", "Next Hunk" },
+	["[h"] = { "<cmd>Gitsigns prev_hunk<CR>", "Prev Hunk" },
 	K = { "<cmd>lua vim.lsp.buf.hover()<CR>", "LSP Hover" },
 	H = {
 		name = "+Hop",

@@ -22,25 +22,34 @@ vim.api.nvim_set_keymap("n", "<S-Down>", "<cmd>resize -10<CR>", { noremap = true
 
 -- Configure <leader>-less, normal-mode keymaps
 -- Make jump mappings repeatable using ; and ,
+
+local function protect_cmd(cmd, err)
+	return function()
+		---@diagnostic disable-next-line: param-type-mismatch
+		local ok = pcall(vim.cmd, cmd)
+		if not ok then
+			vim.cmd("echohl @error | echo 'ERR: " .. err .. "'")
+		end
+	end
+end
+
 local gs = require("gitsigns")
 local ts_repeat_move = require("nvim-treesitter.textobjects.repeatable_move")
 local next_hunk_repeat, prev_hunk_repeat = ts_repeat_move.make_repeatable_move_pair(gs.next_hunk, gs.prev_hunk)
 local next_diag_repeat, prev_diag_repeat =
 	ts_repeat_move.make_repeatable_move_pair(vim.diagnostic.goto_next, vim.diagnostic.goto_next)
-local next_qf_repeat, prev_qf_repeat = ts_repeat_move.make_repeatable_move_pair(function()
-	vim.cmd("cnext")
-end, function()
-	vim.cmd("cprevious")
-end)
-
+local next_qf_repeat, prev_qf_repeat = ts_repeat_move.make_repeatable_move_pair(
+	protect_cmd("cnext", "No quickfix items"),
+	protect_cmd("cprevious", "No quickfix items")
+)
 whichkey.register({
-	["<S-x>"] = { "<cmd>bdelete<CR>" },
 	["[d"] = { prev_diag_repeat, "Prev Diagnostic" },
 	["]d"] = { next_diag_repeat, "Next Diagnostic" },
 	["[;"] = { prev_qf_repeat, "Prev Quickfix" },
 	["];"] = { next_qf_repeat, "Next Quickfix" },
 	["]h"] = { next_hunk_repeat, "Next Hunk" },
 	["[h"] = { prev_hunk_repeat, "Prev Hunk" },
+	["<S-x>"] = { "<cmd>bdelete<CR>", "Buffer Delete" },
 	K = { "<cmd>lua vim.lsp.buf.hover()<CR>", "LSP Hover" },
 	H = {
 		name = "+Hop",

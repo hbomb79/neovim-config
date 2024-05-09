@@ -5,9 +5,7 @@ return {
 	{
 		"glepnir/dashboard-nvim",
 		event = "VimEnter",
-		opts = {
-			shortcut_type = "number",
-		},
+		config = true,
 		dependencies = { "nvim-tree/nvim-web-devicons" },
 	},
 	{

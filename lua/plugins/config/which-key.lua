@@ -74,7 +74,7 @@ whichkey.register({
 local function search_for_repo()
 	local git_paths = vim.fs.find(
 		".git",
-		{ upward = true, stop = vim.uv.os_homedir(), path = vim.fs.dirname(vim.api.nvim_buf_get_name(0)) }
+		{ upward = true, stop = vim.loop.os_homedir(), path = vim.fs.dirname(vim.api.nvim_buf_get_name(0)) }
 	)
 
 	if #git_paths > 0 then

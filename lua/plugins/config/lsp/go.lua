@@ -8,14 +8,15 @@ local config = {
 
 local override_config_paths = vim.fs.find(".gopls.json", {
 	upward = true,
-	stop = vim.uv.os_homedir(),
+	stop = vim.loop.os_homedir(),
 	path = vim.fs.dirname(vim.api.nvim_buf_get_name(0)),
 })
 
 if #override_config_paths > 0 then
-	local p = override_config_paths[1]
-	config = vim.json.decode(vim.fn.readblob(p))
-	vim.notify("Gopls config override found at " .. p, vim.log.levels.TRACE)
+	local path = override_config_paths[1]
+	---@diagnostic disable-next-line: param-type-mismatch
+	config = vim.json.decode(vim.fn.readblob(path))
+	vim.notify("Gopls config override found at " .. path, vim.log.levels.TRACE)
 else
 	vim.notify("No Gopls config override found, using default", vim.log.levels.TRACE)
 end

@@ -56,7 +56,7 @@ return {
 				disable_signs = true,
 				graph_style = "unicode",
 				kind = "split",
-				console_timeout = 500,
+				console_timeout = 5000,
 				integrations = {
 					telescope = true,
 					diffview = true,

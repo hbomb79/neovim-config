@@ -14,7 +14,21 @@ return {
 		},
 		config = function()
 			vim.opt.fillchars:append({ diff = "┈" })
-			require("diffview").setup({ enhanced_diff_hl = true })
+
+			local actions = require("diffview.actions")
+			require("diffview").setup({
+				enhanced_diff_hl = true,
+				keymaps = {
+					file_history_panel = {
+						{
+							"n",
+							"o",
+							actions.open_in_diffview,
+							{ desc = "Open the entry under the cursor in a diffview" },
+						},
+					},
+				},
+			})
 
 			vim.api.nvim_set_keymap("v", "<leader>gd", ":DiffviewFileHistory<CR>", { noremap = true, silent = true })
 		end,

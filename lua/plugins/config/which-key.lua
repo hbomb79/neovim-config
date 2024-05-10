@@ -60,6 +60,37 @@ whichkey.register({
 	},
 })
 
+-- Experienced some weird behaviour if I'm opening Neogit from
+-- a sub-folder in a repo. It would correctly detect the changes,
+-- but any attempt to view the diff, stage, unstage or discard would fail
+-- because it couldn't find the file.
+-- This function will open Neogit using the Lua API, and specify the
+-- current working directory as wherever we find the .git folder.
+-- If no .git folder can be found, you'll see an error.
+-- TODO: consider caching this, but right now you only see a small hit on opening of Neogit (and it
+-- means if the CWD of the Neovim instance changes, you'll still be able to open Neogit there no problem).
+local function search_for_repo()
+	local git_paths = vim.fs.find(
+		".git",
+		{ upward = true, stop = vim.uv.os_homedir(), path = vim.fs.dirname(vim.api.nvim_buf_get_name(0)) }
+	)
+
+	if #git_paths > 0 then
+		return vim.fs.dirname(git_paths[1])
+	end
+end
+
+local function open_neogit()
+	local git_path = search_for_repo()
+	if git_path == nil then
+		vim.notify("Failed to open Neogit: git repository not found", vim.log.levels.ERROR)
+		return
+	end
+
+	vim.notify("Git repository found to be rooted at '" .. git_path .. "'", vim.log.levels.TRACE)
+	require("neogit").open({ cwd = git_path })
+end
+
 -- Configure <leader> keymaps (default leader is space) in normal-mode
 -- Specific keymaps for LSPs/languages may be set elsewhere (typically
 -- in an LSPs onattach (see lsp/init.lua)
@@ -77,10 +108,10 @@ whichkey.register({
 		n = { "<cmd>cnext<CR>", "Next" },
 		p = { "<cmd>cprevious<CR>", "Previous" },
 	},
-	G = { ":Neogit<CR>", "Neogit" },
+	G = { open_neogit, "Neogit" },
 	g = {
 		name = "+Git",
-		g = { ":Neogit<CR>", "Neogit" },
+		g = { open_neogit, "Neogit" },
 		j = { "<cmd>Gitsigns next_hunk<CR>", "Next Hunk" },
 		k = { "<cmd>Gitsigns prev_hunk<CR>", "Prev Hunk" },
 		P = { "<cmd>Gitsigns preview_hunk<CR>", "Preview Hunk" },

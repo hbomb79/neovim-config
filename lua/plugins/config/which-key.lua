@@ -49,6 +49,8 @@ whichkey.register({
 	["];"] = { next_qf_repeat, "Next Quickfix" },
 	["]h"] = { next_hunk_repeat, "Next Hunk" },
 	["[h"] = { prev_hunk_repeat, "Prev Hunk" },
+	["[p"] = { require("harpoon.ui").nav_prev, "Prev Harpoon" },
+	["]p"] = { require("harpoon.ui").nav_next, "Next Harpoon" },
 	["<S-x>"] = { "<cmd>bdelete<CR>", "Buffer Delete" },
 	K = { "<cmd>lua vim.lsp.buf.hover()<CR>", "LSP Hover" },
 	H = {

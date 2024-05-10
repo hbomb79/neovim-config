@@ -35,7 +35,11 @@ return {
 		dependencies = {
 			{
 				"nvim-treesitter/nvim-treesitter-context",
-				config = true,
+				opts = {
+					max_lines = 5,
+					multiline_threshold = 1,
+					trim_scope = "inner",
+				},
 				lazy = false,
 			},
 		},

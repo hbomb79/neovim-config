@@ -37,7 +37,7 @@ local gs = require("gitsigns")
 local ts_repeat_move = require("nvim-treesitter.textobjects.repeatable_move")
 local next_hunk_repeat, prev_hunk_repeat = ts_repeat_move.make_repeatable_move_pair(gs.next_hunk, gs.prev_hunk)
 local next_diag_repeat, prev_diag_repeat =
-	ts_repeat_move.make_repeatable_move_pair(vim.diagnostic.goto_next, vim.diagnostic.goto_next)
+	ts_repeat_move.make_repeatable_move_pair(vim.diagnostic.goto_next, vim.diagnostic.goto_prev)
 local next_qf_repeat, prev_qf_repeat = ts_repeat_move.make_repeatable_move_pair(
 	protect_cmd("cnext", "No quickfix items"),
 	protect_cmd("cprevious", "No quickfix items")

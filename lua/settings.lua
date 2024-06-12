@@ -38,6 +38,8 @@ set({
 	"winbar=%=%m\\ %f",
 	"cmdheight=1",
 	"clipboard+=unnamedplus",
+	"ignorecase",
+	"smartcase",
 })
 
 -- Buffer/general options go here
@@ -83,3 +85,9 @@ apply(vim.g, {
 	nvcode_termcolors = 256,
 	gitblame_enabled = 0,
 })
+
+-- Disable default LSP mappings as they collide with the custom
+-- ones which we define later.
+pcall(vim.keymap.del, "n", "grr")
+pcall(vim.keymap.del, "n", "gra")
+pcall(vim.keymap.del, "n", "grn")

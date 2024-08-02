@@ -1,7 +1,7 @@
 local M = {
 	initialised = false,
 
-	---@alias LspHandler fun(client: lsp.Client, buffer: number): AttachOptions?
+	---@alias LspHandler fun(client: vim.lsp.Client, buffer: number): AttachOptions?
 	---@type { [string]: LspHandler }
 	handlers = {},
 }
@@ -81,7 +81,7 @@ end
 -- Handles an 'LspAttach' event by execting the common on_attach, and any
 -- language-server specific handlers (which must have been registered before-hand).
 function M:buffer_attach(buffer)
-	local clients = vim.lsp.get_active_clients({ bufnr = buffer })
+	local clients = vim.lsp.get_clients({ bufnr = buffer })
 	for _, client in pairs(clients) do
 		local attachOptions = nil
 		local typeHandler = self.handlers[client.name]
@@ -139,63 +139,69 @@ function M:common_on_attach(buffer, client, opts)
 	end
 
 	if getOptionValue(opts, "whichkey_binding", true) then
-		require("which-key").register({
-			l = {
-				name = "+LSP",
-				a = { "<cmd>lua vim.lsp.buf.code_action()<CR>", "Code Action" },
-				A = { "<cmd>lua vim.lsp.codelens.run()<CR>", "Code Lens" },
-				d = { "<cmd>Telescope diagnostics<CR>", "Document Diagnostics" },
-				s = { "<cmd>Telescope lsp_document_symbols<CR>", "Document Symbols" },
-				S = { "<cmd>Telescope lsp_workspace_symbols<CR>", "Workspace Symbols" },
-				f = { "<cmd>lua vim.lsp.buf.format()<CR>", "Format" },
-				i = { "<cmd>LspInfo<CR>", "Info" },
-				r = { "<cmd>lua vim.lsp.buf.rename()<CR>", "Rename" },
-				n = { "<cmd>lua vim.diagnostic.goto_next()<CR>", "Next Error" },
-				p = { "<cmd>lua vim.diagnostic.goto_prev()<CR>", "Prev Error" },
-				l = { "<cmd>lua vim.diagnostic.open_float()<CR>", "Line Diagnostics" },
-			},
-		}, { prefix = "<leader>", buffer = buffer })
+		require("which-key").add({
+			{ "<leader>l", buffer = buffer, group = "LSP" },
+			{ "<leader>lA", "<cmd>lua vim.lsp.codelens.run()<CR>", buffer = buffer, desc = "Code Lens" },
+			{ "<leader>lS", "<cmd>Telescope lsp_workspace_symbols<CR>", buffer = buffer, desc = "Workspace Symbols" },
+			{ "<leader>la", "<cmd>lua vim.lsp.buf.code_action()<CR>", buffer = buffer, desc = "Code Action" },
+			{ "<leader>ld", "<cmd>Telescope diagnostics<CR>", buffer = buffer, desc = "Document Diagnostics" },
+			{ "<leader>lf", "<cmd>lua vim.lsp.buf.format()<CR>", buffer = buffer, desc = "Format" },
+			{ "<leader>li", "<cmd>LspInfo<CR>", buffer = buffer, desc = "Info" },
+			{ "<leader>ll", "<cmd>lua vim.diagnostic.open_float()<CR>", buffer = buffer, desc = "Line Diagnostics" },
+			{ "<leader>ln", "<cmd>lua vim.diagnostic.goto_next()<CR>", buffer = buffer, desc = "Next Error" },
+			{ "<leader>lp", "<cmd>lua vim.diagnostic.goto_prev()<CR>", buffer = buffer, desc = "Prev Error" },
+			{ "<leader>lr", "<cmd>lua vim.lsp.buf.rename()<CR>", buffer = buffer, desc = "Rename" },
+			{ "<leader>ls", "<cmd>Telescope lsp_document_symbols<CR>", buffer = buffer, desc = "Document Symbols" },
+		})
 
-		require("which-key").register({
-			g = {
-				name = "+LSP",
-				r = {
-					function()
-						vim.lsp.buf.references()
-						-- require("trouble").open("lsp_references")
-					end,
-					"References",
-				},
-				i = {
-					function()
-						vim.lsp.buf.implementation()
-						-- require("trouble").open("lsp_implementations")
-					end,
-					"Implementations",
-				},
-				d = {
-					function()
-						vim.lsp.buf.definition()
-						-- require("trouble").open("lsp_definitions")
-					end,
-					"Definitions",
-				},
-				T = {
-					function()
-						vim.lsp.buf.type_definition()
-						-- require("trouble").open("lsp_type_definitions")
-					end,
-					"Type Definitions",
-				},
-				D = {
-					function()
-						vim.lsp.buf.declaration()
-						-- require("trouble").open("lsp_declarations")
-					end,
-					"Declarations",
-				},
+		require("which-key").add({
+			{ "g", buffer = buffer, group = "LSP" },
+			{
+				"gD",
+				function()
+					vim.lsp.buf.declaration()
+					-- require("trouble").open("lsp_declarations")
+				end,
+				buffer = buffer,
+				desc = "Declarations",
 			},
-		}, { buffer = buffer })
+			{
+				"gT",
+				function()
+					vim.lsp.buf.type_definition()
+					-- require("trouble").open("lsp_type_definitions")
+				end,
+				buffer = buffer,
+				desc = "Type Definitions",
+			},
+			{
+				"gd",
+				function()
+					vim.lsp.buf.definition()
+					-- require("trouble").open("lsp_definitions")
+				end,
+				buffer = buffer,
+				desc = "Definitions",
+			},
+			{
+				"gi",
+				function()
+					vim.lsp.buf.implementation()
+					-- require("trouble").open("lsp_implementations")
+				end,
+				buffer = buffer,
+				desc = "Implementations",
+			},
+			{
+				"gr",
+				function()
+					vim.lsp.buf.references()
+					-- require("trouble").open("lsp_references")
+				end,
+				buffer = buffer,
+				desc = "References",
+			},
+		})
 	end
 end
 

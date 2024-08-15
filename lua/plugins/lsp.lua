@@ -44,6 +44,11 @@ return {
 		"mfussenegger/nvim-lint",
 		config = function()
 			require("lint").linters_by_ft = { go = { "golangcilint" } }
+
+			-- Disable max same issues check as this can hide issues when the maximum
+			-- of that issue type was detected in a different file in the same package.
+			table.insert(require("lint").linters["golangcilint"].args, 2, "--max-same-issues=0")
+
 			vim.api.nvim_create_autocmd({ "BufWinEnter", "BufWritePost" }, {
 				callback = function()
 					require("lint").try_lint()

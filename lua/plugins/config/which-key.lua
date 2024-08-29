@@ -45,11 +45,11 @@ local next_qf_repeat, prev_qf_repeat = ts_repeat_move.make_repeatable_move_pair(
 
 whichkey.add({
 	{ "<S-x>", "<cmd>bdelete<CR>", desc = "Buffer Delete" },
-	{ "H", group = "Hop" },
-	{ "HC", "<cmd>lua require('hop').hint_char1 {current_line_only = true}<CR>", desc = "Line Char" },
-	{ "HH", "<cmd>lua require('hop').hint_words {current_line_only = true}<CR>", desc = "Line Word" },
-	{ "Hc", "<cmd>lua require('hop').hint_char1 {current_line_only = false}<CR>", desc = "Global Char" },
-	{ "Hh", "<cmd>lua require('hop').hint_words()<CR>", desc = "Global Word" },
+	{ "<leader>h", group = "Hop" },
+	{ "<leader>hc", "<cmd>lua require('hop').hint_char1 {current_line_only = true}<CR>", desc = "Line Char" },
+	{ "<leader>hh", "<cmd>lua require('hop').hint_words {current_line_only = true}<CR>", desc = "Line Word" },
+	{ "<leader>hC", "<cmd>lua require('hop').hint_char1 {current_line_only = false}<CR>", desc = "Global Char" },
+	{ "<leader>hH", "<cmd>lua require('hop').hint_words()<CR>", desc = "Global Word" },
 	{ "K", "<cmd>lua vim.lsp.buf.hover()<CR>", desc = "LSP Hover" },
 	{ "[;", prev_qf_repeat, desc = "Prev Quickfix" },
 	{ "[d", prev_diag_repeat, desc = "Prev Diagnostic" },

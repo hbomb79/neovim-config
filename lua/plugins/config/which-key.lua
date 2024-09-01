@@ -5,7 +5,7 @@
 local whichkey = require("which-key")
 
 -- Default options are fine
-whichkey.setup({})
+whichkey.setup({ preset = "helix" })
 
 -- Set leader
 vim.api.nvim_set_keymap("n", "<Space>", "<NOP>", { noremap = true, silent = true })

@@ -54,7 +54,7 @@ apply(vim.o, {
 	termguicolors = true,
 	splitright = true,
 	conceallevel = 0,
-	showtabline = 2,
+	showtabline = 1,
 	showmode = false,
 	backup = false,
 	writebackup = false,

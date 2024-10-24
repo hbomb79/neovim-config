@@ -101,7 +101,7 @@ whichkey.add({
 	{ "<leader><leader>", "<cmd>nohlsearch<CR>", desc = "Clear Search Highlight" },
 	{ "<leader>E", "<cmd>Neotree reveal<CR>", desc = "Reveal file in Tree" },
 	{ "<leader>G", open_neogit, desc = "Neogit" },
-	{ "<leader>e", "<cmd>Neotree<CR>", desc = "Open File Tree" },
+	{ "<leader>e", "<cmd>Neotree last<CR>", desc = "Open File Tree" },
 	{ "<leader>f", "<cmd>Telescope find_files<CR>", desc = "Find File" },
 	{ "<leader>g", group = "Git" },
 	{ "<leader>gP", "<cmd>Gitsigns preview_hunk<CR>", desc = "Preview Hunk" },

@@ -13,25 +13,25 @@ return {
 		lualine_c = {
 			{
 				function()
-					local clients = vim.lsp.get_active_clients()
-					if next(clients) == nil then
-						return "No LSP"
-					end
+					local clients = vim.lsp.get_clients({ bufnr = vim.api.nvim_get_current_buf() })
+					-- if next(clients) == nil then
+					-- 	return "No LSP"
+					-- end
 
-					local matching_clients = {}
-					local buf_ft = vim.api.nvim_buf_get_option(0, "filetype")
+					local client_names = {}
+					-- local buf_ft = vim.api.nvim_buf_get_option(0, "filetype")
 					for _, client in ipairs(clients) do
-						local filetypes = client.config.filetypes
-						if filetypes and vim.fn.index(filetypes, buf_ft) ~= -1 then
-							table.insert(matching_clients, client.name)
-						end
+						-- local filetypes = client.config.filetypes
+						-- if filetypes and vim.fn.index(filetypes, buf_ft) ~= -1 then
+						table.insert(client_names, client.name)
+						-- end
 					end
 
-					if #matching_clients == 0 then
+					if #client_names == 0 then
 						return "No LSP"
 					end
 
-					return table.concat(matching_clients, "|")
+					return table.concat(client_names, "|")
 				end,
 				icon = "",
 			},

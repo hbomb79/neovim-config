@@ -6,4 +6,5 @@ return {
 	require("plugins.lang.angular"),
 	require("plugins.lang.typescript"),
 	require("plugins.lang.markdown"),
+	require("plugins.lang.elixir"),
 }

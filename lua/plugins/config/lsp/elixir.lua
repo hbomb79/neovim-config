@@ -1,6 +1,12 @@
-require("lspconfig").elixirls.setup({})
+--require("lsp"):set_handler(
+--	"ElixirLS",
+--	---@param client lsp.Client
+--	function(_, _)
+--		return { auto_hover = false }
+--	end
+--)
 require("lsp"):set_handler(
-	"elixirls",
+	"Next LS",
 	---@param client lsp.Client
 	function(_, _)
 		return { auto_hover = false }

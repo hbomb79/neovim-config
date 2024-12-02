@@ -1,6 +1,6 @@
-require("lspconfig").lexical.setup({})
+require("lspconfig").elixirls.setup({})
 require("lsp"):set_handler(
-	"lexical",
+	"elixirls",
 	---@param client lsp.Client
 	function(_, _)
 		return { auto_hover = false }

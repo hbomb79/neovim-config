@@ -40,6 +40,8 @@ set({
 	"clipboard+=unnamedplus",
 	"ignorecase",
 	"smartcase",
+	"spell",
+	"spelloptions=noplainbuffer,camel",
 })
 
 -- Buffer/general options go here

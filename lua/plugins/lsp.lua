@@ -4,11 +4,11 @@ return {
 		{
 			"williamboman/mason.nvim",
 			config = true,
-			dependencies = { "williamboman/mason-lspconfig.nvim" },
 		},
 		{
 			"williamboman/mason-lspconfig.nvim",
 			opts = { automatic_installation = { exclude = { "gopls", "rust_analyzer" } } },
+			dependencies = { "williamboman/mason.nvim" },
 			config = true,
 		},
 		-- Ensure both mason and mason-lspconfig are loaded BEFORE we do any language/LSP setup by disabling lazy.

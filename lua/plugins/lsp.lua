@@ -61,7 +61,10 @@ return {
 			require("lint").linters_by_ft = require("lsp"):get_lang_linters()
 			vim.api.nvim_create_autocmd({ "BufWinEnter", "BufWritePost" }, {
 				callback = function()
-					require("lint").try_lint()
+					local ok, err = pcall(require("lint").try_lint)
+					if not ok and err ~= nil then
+						vim.notify("Lint error: " .. vim.inspect(err), vim.log.levels.ERROR)
+					end
 				end,
 			})
 		end,

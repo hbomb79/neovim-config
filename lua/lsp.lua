@@ -4,12 +4,12 @@ local M = {
 	initialised = false,
 
 	---@class LangSpec {
-	---@field name string Name of the language, used for 'AUTO' plugins/post_load_hook. If not specified, then first filetype is used instead
+	---@field name string|nil name of the language. If not specified, then the first filetype is used instead
 	---@field ft string[] the filetypes to associate with this language
-	---@field plugins LazySpec[]|'AUTO'|nil The Lazy.nvim plugin specs. Each will be set to lazy-load for the filetypes set. If auto, then uses require('plugins.lang.<name>')
+	---@field plugins LazySpec[]|'AUTO'|nil The Lazy.nvim plugin specs. Each will be set to lazy-load for the filetypes specified. If 'AUTO', then uses require('plugins.lang.<name>')
 	---@field formatters string[]|nil Specify formatters to setup using Conform.
 	---@field linters string[]|nil Specify linters to setup using nvim-lint.
-	---@field post_load_hook function|'AUTO'|nil A function to call the first time a file is opened which matches this filetype. If auto, then uses require('lspconfig.<name>').
+	---@field post_load_hook function|'AUTO'|nil A function to call the first time a file is opened which matches this filetype. If 'AUTO', then uses require('lspconfig.<name>').
 	---@field mason_auto_install table|nil The Mason LSP(s) to auto-install for this language.
 	---}
 
@@ -23,13 +23,12 @@ local M = {
 
 ---Adds a language specification to the LSP manager. Note that LSP installation is handled
 ---automatically by Mason, and this function is only responsible for registering the language
----@param ... LangSpec[]
-function M:add_specs(...)
+---@param specs LangSpec[]
+function M:add_specs(specs)
 	if self.initialised then
 		error("cannot call add_specs() after called :initialise()")
 	end
 
-	local specs = { ... } ---@type LangSpec[]
 	for _, spec in pairs(specs) do
 		if spec.name == nil then
 			spec.name = spec.ft[1]
@@ -209,7 +208,7 @@ function M:initialise()
 		{ texthl = "LspDiagnosticsSignInformation", text = "", numhl = "LspDiagnosticsSignInformation" }
 	)
 
-	vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
+	vim.diagnostic.config({
 		virtual_text = {
 			prefix = "",
 			spacing = 0,

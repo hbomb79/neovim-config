@@ -27,7 +27,7 @@ require("settings")
 -- LSP initialisation. This configuration uses a centralized table to store all
 -- language specific specifications. Refer to the LangSpec type for more information
 local lsp = require("lsp")
-lsp:add_specs(
+lsp:add_specs({
 
 	-- Register Lua
 	{
@@ -44,7 +44,7 @@ lsp:add_specs(
 	-- Note: The Go tools are excluded from Mason 'ensure_installed'
 	{
 		ft = { "go", "gomod" },
-		linters = { "golangci-lint" },
+		linters = { "golangcilint" },
 		post_load_hook = "AUTO",
 	},
 
@@ -148,8 +148,8 @@ lsp:add_specs(
 				return { auto_hover = false }
 			end)
 		end,
-	}
-)
+	},
+})
 
 lsp:initialise()
 

@@ -85,7 +85,6 @@ return {
 		{ name = "path" },
 	},
 	experimental = {
-		native_menu = false,
 		ghost_text = true,
 	},
 }

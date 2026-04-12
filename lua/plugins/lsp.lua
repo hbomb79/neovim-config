@@ -7,7 +7,10 @@ return {
 		},
 		{
 			"williamboman/mason-lspconfig.nvim",
-			opts = { automatic_installation = { exclude = { "gopls", "rust_analyzer" } } },
+			opts = {
+				automatic_installation = { exclude = { "gopls", "rust_analyzer" } },
+				automatic_enable = true,
+			},
 			dependencies = { "williamboman/mason.nvim" },
 			config = true,
 		},
@@ -31,9 +34,21 @@ return {
 	},
 	{
 		"j-hui/fidget.nvim",
-		tag = "legacy",
 		event = "LspAttach",
-		opts = { text = { spinner = "arc" } },
+		opts = {
+			progress = {
+				suppress_on_insert = true,
+				display = {
+					render_limit = 5,
+					progress_icon = { "arc" },
+				},
+			},
+			notification = {
+				window = {
+					winblend = 0,
+				},
+			},
+		},
 	},
 	{
 		"ray-x/lsp_signature.nvim",
@@ -43,12 +58,7 @@ return {
 	{
 		"mfussenegger/nvim-lint",
 		config = function()
-			require("lint").linters_by_ft = { go = { "golangcilint" } }
-
-			-- Disable max same issues check as this can hide issues when the maximum
-			-- of that issue type was detected in a different file in the same package.
-			table.insert(require("lint").linters["golangcilint"].args, 2, "--max-same-issues=0")
-
+			require("lint").linters_by_ft = require("lsp"):get_lang_linters()
 			vim.api.nvim_create_autocmd({ "BufWinEnter", "BufWritePost" }, {
 				callback = function()
 					require("lint").try_lint()
@@ -67,13 +77,9 @@ return {
 			},
 		},
 		opts = {
-			formatters_by_ft = {
-				lua = { "stylua" },
-				typescript = { "prettierd" },
-				javascript = { "prettierd" },
-			},
+			formatters_by_ft = require("lsp"):get_lang_formatters(),
 			format_on_save = {
-				timeout_ms = 500,
+				timeout_ms = 2500,
 				lsp_fallback = true,
 			},
 		},

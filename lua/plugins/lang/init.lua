@@ -1,10 +1,2 @@
-return {
-	require("plugins.lang.go"),
-	require("plugins.lang.lua"),
-	require("plugins.lang.scala"),
-	require("plugins.lang.ocaml"),
-	require("plugins.lang.angular"),
-	require("plugins.lang.typescript"),
-	require("plugins.lang.markdown"),
-	require("plugins.lang.elixir"),
-}
+-- Extract language specs from the LSP manager and inject them here so that Lazy.nvim loads them
+return require("lsp"):get_lang_plugin_specs()

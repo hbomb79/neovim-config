@@ -90,6 +90,3 @@ apply(vim.g, {
 
 -- Disable default LSP mappings as they collide with the custom
 -- ones which we define later.
-pcall(vim.keymap.del, "n", "grr")
-pcall(vim.keymap.del, "n", "gra")
-pcall(vim.keymap.del, "n", "grn")

@@ -2,15 +2,17 @@ return {
 	{
 		"saadparwaiz1/cmp_luasnip",
 		dependencies = { "L3MON4D3/LuaSnip" },
-		ft = { "lua" },
 	},
 	{
-		"folke/neodev.nvim",
-		opts = {},
-		config = function()
-			require("neodev").setup({})
-			require("plugins.config.lsp.lua")
-		end,
-		ft = { "lua" },
+		"folke/lazydev.nvim",
+		opts = {
+			library = {
+				{ path = "${3rd}/luv/library", words = { "vim%.uv" } },
+				{ path = "LazyVim", words = { "LazyVim" } },
+				{ path = "snacks.nvim", words = { "Snacks" } },
+				{ path = "lazy.nvim", words = { "LazyVim" } },
+				{ path = "nvim-lspconfig", words = { "lspconfig.settings" } },
+			},
+		},
 	},
 }

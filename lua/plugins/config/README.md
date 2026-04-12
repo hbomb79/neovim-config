@@ -1,5 +1,4 @@
 ### Plugin Config
 
-This directory contains files which contain plugin configuration. A dedicated file for plugin configuration
-is preferred over specifying the config directly in the plugin specification when the configuration
-is large. With that in mind, most of the time we only specify a handful of configuration keys for a plugin though, so the configuration will be included there instead.
+When a plugins configuration is too long/complicated to be contained within the plugin spec itself, one can
+create a dedicated file here to hold that config.

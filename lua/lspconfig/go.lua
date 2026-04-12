@@ -8,7 +8,7 @@ local config = {
 
 local override_config_paths = vim.fs.find(".gopls.json", {
 	upward = true,
-	stop = vim.loop.os_homedir(),
+	stop = vim.uv.os_homedir(),
 	path = vim.fs.dirname(vim.api.nvim_buf_get_name(0)),
 })
 
@@ -22,10 +22,14 @@ else
 end
 
 vim.notify("Setting up gopls LSP with config: " .. vim.inspect(config), vim.log.levels.TRACE)
-require("lspconfig").gopls.setup({
+vim.lsp.config("gopls", {
 	cmd = { "gopls", "serve" },
 	filetypes = { "go", "gomod" },
-	root_dir = require("lspconfig.util").root_pattern("go.work", "go.mod", ".git"),
+	root_markers = { "go.mod", "go.work", ".git" },
 	settings = { gopls = config },
 })
-require("lsp"):notify_new_lsp()
+vim.lsp.enable("gopls")
+
+-- Disable max same issues check as this can hide issues when the maximum
+-- of that issue type was detected in a different file in the same package.
+table.insert(require("lint").linters["golangcilint"].args, 2, "--max-same-issues=0")

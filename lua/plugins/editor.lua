@@ -48,9 +48,9 @@ return {
 		cmd = "Neotree",
 	},
 	{
-		"phaazon/hop.nvim",
+		"smoka7/hop.nvim",
 		opts = { keys = "etovxqpdygfblzhckisuran" },
-		branch = "v2",
+		version = "*",
 		lazy = true,
 	},
 	{

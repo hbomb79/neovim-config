@@ -422,7 +422,7 @@ function M:set_handler(lspName, handler)
 	end
 
 	if self.handlers[lspName] ~= nil then
-		error("Cannot set handler for LSP '" .. lspName .. "' as a handler for this LSP is already set")
+		return vim.notify("Ignoring duplicate handler for '" .. lspName .. "'", vim.log.levels.WARN)
 	end
 
 	vim.notify("Registered '" .. lspName .. "' LSP handler", vim.log.levels.DEBUG)

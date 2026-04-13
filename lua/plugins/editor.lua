@@ -171,9 +171,9 @@ return {
 					desc = "Restore",
 				},
 				{
-					"<leader>cA",
+					"<leader>c/",
 					mc.searchAllAddCursors,
-					desc = "Add for search results",
+					desc = "Add at search results",
 				},
 				{
 					"<leader>cd",

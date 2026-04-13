@@ -1,16 +1,15 @@
 -- Centralized LSP management. Refer to root init.lua for configured languages.
-
 local M = {
 	initialised = false,
 
 	---@class LangSpec {
 	---@field name? string name of the language. If not specified, then the first filetype is used instead
 	---@field ft string[] the filetypes to associate with this language
-	---@field plugins? LazySpec[]|'AUTO' The Lazy.nvim plugin specs. Each will be set to lazy-load for the filetypes specified. If 'AUTO', then uses require('plugins.lang.<name>')
+	---@field plugins? LazySpec[] The LazyVim plugin specs. Each will be set to lazy-load for the filetypes specified.
 	---@field formatters? string[] Specify formatters to setup using Conform.
 	---@field linters? string[] Specify linters to setup using nvim-lint.
-	---@field post_load_hook? function|'AUTO' A function to call the first time a file is opened which matches this filetype. If 'AUTO', then uses require('lspconfig.<name>').
-	---@field mason_auto_install? table The Mason LSP(s) to auto-install for this language.
+	---@field on_load? function A function to call the FIRST time a file is opened which matches the languages filetype.
+	---@field mason_auto_install? table The Mason LSP(s) to auto-install for this language. Note: formatters are auto-installed using mason-conform, so only LSPs/linters need to be specified here
 	---}
 
 	---@type LangSpec[]
@@ -21,30 +20,27 @@ local M = {
 	handlers = {},
 }
 
----Adds a language specification to the LSP manager. Note that LSP installation is handled
----automatically by Mason, and this function is only responsible for registering the language
----@param specs LangSpec[]
-function M:add_specs(specs)
+---Adds a language specification to the LSP manager.
+---@param spec LangSpec
+function M:add_spec(spec)
 	if self.initialised then
-		error("cannot call add_specs() after called :initialise()")
+		error("cannot call :add_spec() after :initialise()")
 	end
 
-	for _, spec in pairs(specs) do
-		if type(spec.ft) ~= "table" or #spec.ft == 0 then
-			local err = string.format(
-				"error adding spec: ft must be a non-empty table of filetypes, but found: %s for spec %s",
-				vim.inspect(spec.ft),
-				vim.inspect(spec)
-			)
-			error(err, 2)
-		end
-
-		if spec.name == nil then
-			spec.name = spec.ft[1]
-		end
-
-		table.insert(self.specs, spec)
+	if type(spec.ft) ~= "table" or #spec.ft == 0 then
+		local err = string.format(
+			"error adding spec: ft must be a non-empty table of filetypes, but found: %s for spec %s",
+			vim.inspect(spec.ft),
+			vim.inspect(spec)
+		)
+		error(err, 2)
 	end
+
+	if spec.name == nil then
+		spec.name = spec.ft[1]
+	end
+
+	table.insert(self.specs, spec)
 end
 
 ---Iterates over all language specs and extracts the value of the given field (if any) and
@@ -97,25 +93,18 @@ function M:get_lang_plugin_specs()
 			goto continue
 		end
 
-		-- If 'AUTO' specified, then load the plugins from the derived (using
-		-- the spec name) Lua module.
-		local plugins = spec.plugins
-		if type(spec.plugins) == "string" and spec.plugins == "AUTO" then
-			plugins = require("plugins.lang." .. spec.name) ---@type LazySpec[]
-		end
-
-		if type(plugins) ~= "table" then
+		if type(spec.plugins) ~= "table" then
 			local err = string.format(
 				"Unable to process %q language spec: plugin spec invalid (expected table): %s",
 				spec.name,
-				vim.inspect(plugins)
+				vim.inspect(spec.plugins)
 			)
 			error(err)
 		end
 
 		-- Iterate over the plugins specified. If any contain a 'filetype' Lazy-loading
 		-- directive, raise an error to protect against an accidental programming error.
-		for _, plug in pairs(plugins) do
+		for _, plug in pairs(spec.plugins) do
 			if plug.ft ~= nil then
 				local err = string.format(
 					"Unable to process %q language spec: plugin spec declared filetype: %s",
@@ -135,19 +124,43 @@ function M:get_lang_plugin_specs()
 	return plugs
 end
 
--- Initialises the plugin manager by creating an autocmd on the
--- LspAttach event, and configuring the global LSP settings/handlers.
-function M:initialise()
-	if self.initialised then
-		return
-	end
-	self.initialised = true
+---Initialised language specifications by enumerating the files in the 'langs'
+---directory and loading them using 'require'.
+function M:_initialise_langs()
+	-- This NeoVim configuration uses a centralized registry
+	-- to store language 'specifications'. These specifications contain the plugins,
+	-- linters, formatters, etc for each language, and act as a single place to keep all
+	-- configuration pertaining to a given language.
+	--
+	-- Each language specification exists within its own file in the lang directory; the code below
+	-- is responsible for enumerating the files and loading them (via require).
+	-- Each file is expected to register its language specs with the LSP registry.
 
 	local raise = function(format, ...)
 		local err = string.format(format, ...)
-		error("failed to initialise LSP manager: " .. err, 3)
+		error("failed to initialise LSP manager: " .. err, 4)
 	end
 
+	-- 1. Find the langs directory relative to the configuration root of this installation.
+	local handle = vim.uv.fs_scandir(vim.fn.stdpath("config") .. "/lua/langs")
+	if not handle then
+		raise("langs directory missing")
+	end
+
+	-- 2. Iterate over every file in it, loading (via 'require') every .lua file
+	while true do
+		---@diagnostic disable-next-line: param-type-mismatch nil check performed above but LuaLS doesn't realise 'raise' will abort the function
+		local name, type = vim.uv.fs_scandir_next(handle)
+		if not name then
+			break
+		end
+
+		if type == "file" and name:match("%.lua$") then
+			require("langs." .. name:gsub("%.lua$", ""))
+		end
+	end
+
+	-- 3. Validate specs
 	local name_set = {}
 	for _, spec in pairs(self.specs) do
 		if spec.name == nil then
@@ -157,20 +170,16 @@ function M:initialise()
 		end
 		name_set[spec.name] = true
 
-		local on_load = spec.post_load_hook
-		if type(on_load) == "string" and on_load == "AUTO" then
-			on_load = function()
-				require("lspconfig." .. spec.name)
-			end
-		elseif type(on_load) ~= "function" and on_load ~= nil then
-			raise("language spec %q specified invalid post_load_hook (type %s)", spec.name, type(spec.post_load_hook))
+		if type(spec.on_load) ~= "function" and spec.on_load ~= nil then
+			raise("language spec %q specified invalid on_load callback (type %s)", spec.name, type(spec.on_load))
 		end
 
 		vim.api.nvim_create_autocmd("FileType", {
 			pattern = spec.ft,
 			once = true,
 			callback = function()
-				-- If an auto_install LSP is specified, install it if not already
+				-- If the language spec wants certain LSPs or other tools auto-installed, then
+				-- check for them here and perform the auto install if required.
 				if type(spec.mason_auto_install) == "table" then
 					for _, lsp in pairs(spec.mason_auto_install) do
 						if not require("mason-registry").is_installed(lsp) then
@@ -179,12 +188,23 @@ function M:initialise()
 					end
 				end
 
-				if type(on_load) == "function" then
-					on_load()
+				if type(spec.on_load) == "function" then
+					spec.on_load()
 				end
 			end,
 		})
 	end
+end
+
+-- Initialises the plugin manager by creating an autocmd on the
+-- LspAttach event, and configuring the global LSP settings/handlers.
+function M:initialise()
+	if self.initialised then
+		return
+	end
+
+	self:_initialise_langs()
+	self.initialised = true
 
 	-- Remove default LSP mappings that conflict with our own
 	vim.keymap.del("n", "gri")

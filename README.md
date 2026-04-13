@@ -1,11 +1,9 @@
 ## Configuration Structure:
 
 ```
-/init.lua                 <- Language registration (LSPs, formatters, etc)
+/init.lua                 <- Bootstrapping
 /lua 
-    /lspconfig            <- Large LSP config that has been moved to own file
+    /langs                <- Language specifications (plugins, formatters, linters, etc)
     /plugins              <- All Lazy.nvim plugin specs
-        /config           <- Large plugin config when too large to inline
-        /lang             <- Plugins grouped by the specific language they target
 ```
 

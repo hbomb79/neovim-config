@@ -18,17 +18,6 @@ return {
 		lazy = true,
 	},
 	{
-		"nvim-lualine/lualine.nvim",
-		dependencies = { "nvim-tree/nvim-web-devicons" },
-		opts = require("plugins.config.lualine"),
-	},
-	{
-		"folke/which-key.nvim",
-		config = function()
-			require("plugins.config.which-key")
-		end,
-	},
-	{
 		"nvim-neo-tree/neo-tree.nvim",
 		opts = {
 			close_if_last_window = true,

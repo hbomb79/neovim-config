@@ -1,6 +1,5 @@
 -- Register Scala language tools. Some fairly extensive bootstrapping occurs
 -- in the post load hook, mainly to fix a bug which broke diagnostics.
--- TODO: investigate if this fix is still required.
 
 require("lsp"):add_spec({
 	ft = { "scala", "sbt" },

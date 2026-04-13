@@ -28,17 +28,19 @@ require("lsp"):add_spec({
 		-- If config file is found, use that instead of the default
 		if #override_config_paths > 0 then
 			local path = override_config_paths[1]
-			---@diagnostic disable-next-line: param-type-mismatch
-			config = vim.json.decode(vim.fn.readblob(path))
-			vim.notify("Gopls config override found at " .. path, vim.log.levels.TRACE)
+			vim.notify(
+				"Gopls config override found at " .. path .. ". Merging with default config",
+				vim.log.levels.TRACE
+			)
+
+			local override = vim.json.decode(vim.fn.readblob(path))
+			config = vim.tbl_extend("force", config, override)
 		else
 			vim.notify("No Gopls config override found, using default", vim.log.levels.TRACE)
 		end
 
 		vim.notify("Setting up gopls LSP with config: " .. vim.inspect(config), vim.log.levels.TRACE)
 		vim.lsp.config("gopls", {
-			cmd = { "gopls", "serve" },
-			filetypes = { "go", "gomod" },
 			root_markers = { "go.mod", "go.work", ".git" },
 			settings = { gopls = config },
 		})

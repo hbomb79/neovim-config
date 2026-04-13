@@ -1,31 +1,3 @@
-local icons = {
-	Text = "",
-	Method = "",
-	Function = "",
-	Constructor = "",
-	Field = "ﰠ",
-	Variable = "",
-	Class = "ﴯ",
-	Interface = "",
-	Module = "",
-	Property = "ﰠ",
-	Unit = "塞",
-	Value = "",
-	Enum = "",
-	Keyword = "",
-	Snippet = "",
-	Color = "",
-	File = "",
-	Reference = "",
-	Folder = "",
-	EnumMember = "",
-	Constant = "",
-	Struct = "פּ",
-	Event = "",
-	Operator = "",
-	TypeParameter = "",
-}
-
 return {
 	"hrsh7th/nvim-cmp",
 	opts = function()
@@ -39,7 +11,8 @@ return {
 			},
 			formatting = {
 				format = function(entry, vim_item)
-					vim_item.kind = string.format("%s %s", icons[vim_item.kind], vim_item.kind)
+					local mini_icons = require("mini.icons")
+					vim_item.kind = string.format("%s %s", mini_icons.get("lsp", vim_item.kind), vim_item.kind)
 
 					vim_item.menu = ({
 						nvim_lsp = "[LSP]",
@@ -87,7 +60,7 @@ return {
 				{ name = "nvim_lsp" },
 				{ name = "nvim_lua" },
 				{ name = "luasnip" },
-				{ name = "buffer", keyword_length = 8 },
+				{ name = "buffer", keyword_length = 5 },
 				{ name = "path" },
 			},
 			experimental = {
@@ -101,5 +74,6 @@ return {
 		"hrsh7th/cmp-path",
 		"hrsh7th/cmp-cmdline",
 		"hrsh7th/cmp-nvim-lua",
+		{ "nvim-mini/mini.icons", opts = {} },
 	},
 }

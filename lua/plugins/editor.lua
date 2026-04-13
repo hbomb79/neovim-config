@@ -3,6 +3,20 @@ return {
 		"tpope/vim-sensible",
 	},
 	{
+		"echasnovski/mini.icons",
+		opts = {},
+		lazy = true,
+		specs = {
+			{ "nvim-tree/nvim-web-devicons", enabled = false, optional = true },
+		},
+		init = function()
+			package.preload["nvim-web-devicons"] = function()
+				require("mini.icons").mock_nvim_web_devicons()
+				return package.loaded["nvim-web-devicons"]
+			end
+		end,
+	},
+	{
 		"glepnir/dashboard-nvim",
 		event = "VimEnter",
 		config = true,
@@ -233,5 +247,14 @@ return {
 			vim.g.mkdp_auto_close = 0
 			vim.g.mkdp_theme = "dark"
 		end,
+	},
+	{
+		"stevearc/oil.nvim",
+		---@module 'oil'
+		---@type oil.SetupOpts
+		opts = {},
+		dependencies = { { "nvim-mini/mini.icons", opts = {} } },
+		-- Lazy loading is not recommended because it is very tricky to make it work correctly in all situations.
+		-- lazy = false,
 	},
 }

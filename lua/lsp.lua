@@ -4,13 +4,13 @@ local M = {
 	initialised = false,
 
 	---@class LangSpec {
-	---@field name string|nil name of the language. If not specified, then the first filetype is used instead
+	---@field name? string name of the language. If not specified, then the first filetype is used instead
 	---@field ft string[] the filetypes to associate with this language
-	---@field plugins LazySpec[]|'AUTO'|nil The Lazy.nvim plugin specs. Each will be set to lazy-load for the filetypes specified. If 'AUTO', then uses require('plugins.lang.<name>')
-	---@field formatters string[]|nil Specify formatters to setup using Conform.
-	---@field linters string[]|nil Specify linters to setup using nvim-lint.
-	---@field post_load_hook function|'AUTO'|nil A function to call the first time a file is opened which matches this filetype. If 'AUTO', then uses require('lspconfig.<name>').
-	---@field mason_auto_install table|nil The Mason LSP(s) to auto-install for this language.
+	---@field plugins? LazySpec[]|'AUTO' The Lazy.nvim plugin specs. Each will be set to lazy-load for the filetypes specified. If 'AUTO', then uses require('plugins.lang.<name>')
+	---@field formatters? string[] Specify formatters to setup using Conform.
+	---@field linters? string[] Specify linters to setup using nvim-lint.
+	---@field post_load_hook? function|'AUTO' A function to call the first time a file is opened which matches this filetype. If 'AUTO', then uses require('lspconfig.<name>').
+	---@field mason_auto_install? table The Mason LSP(s) to auto-install for this language.
 	---}
 
 	---@type LangSpec[]
@@ -30,6 +30,15 @@ function M:add_specs(specs)
 	end
 
 	for _, spec in pairs(specs) do
+		if type(spec.ft) ~= "table" or #spec.ft == 0 then
+			local err = string.format(
+				"error adding spec: ft must be a non-empty table of filetypes, but found: %s for spec %s",
+				vim.inspect(spec.ft),
+				vim.inspect(spec)
+			)
+			error(err, 2)
+		end
+
 		if spec.name == nil then
 			spec.name = spec.ft[1]
 		end
@@ -38,52 +47,45 @@ function M:add_specs(specs)
 	end
 end
 
----Uses the registered languages to construct linters for use with nvim-lint.
+---Iterates over all language specs and extracts the value of the given field (if any) and
+---collates the values using the filetype of the language. For example, can be used to get all
+---the linters grouped by the filetype they act on.
+---
+---@param field string
 ---@return { [string]: string[] }
-function M:get_lang_linters()
+function M:_group_lang_field_by_ft(field)
 	---@type {[string]: string[]}
-	local linters_by_ft = {}
+	local field_by_ft = {}
 
 	for _, v in pairs(self.specs) do
-		if v.linters == nil then
+		if v[field] == nil then
 			goto continue
 		end
 
 		for _, ft in pairs(v.ft) do
-			linters_by_ft[ft] = linters_by_ft[ft] or {}
-			for _, linter in pairs(v.linters) do
-				table.insert(linters_by_ft[ft], linter)
+			field_by_ft[ft] = field_by_ft[ft] or {}
+
+			for _, val in pairs(v[field]) do
+				table.insert(field_by_ft[ft], val)
 			end
 		end
 
 		::continue::
 	end
 
-	return linters_by_ft
+	return field_by_ft
+end
+
+---Uses the registered languages to construct linters for use with nvim-lint.
+---@return { [string]: string[] }
+function M:get_lang_linters()
+	return self:_group_lang_field_by_ft("linters")
 end
 
 ---Uses the registered languages to construct formatters_by_ft for use with Conform.
 ---@return { [string]: string[] }
 function M:get_lang_formatters()
-	---@type {[string]: string[]}
-	local formatters_by_ft = {}
-
-	for _, v in pairs(self.specs) do
-		if v.formatters == nil then
-			goto continue
-		end
-
-		for _, ft in pairs(v.ft) do
-			formatters_by_ft[ft] = formatters_by_ft[ft] or {}
-			for _, fmt in pairs(v.formatters) do
-				table.insert(formatters_by_ft[ft], fmt)
-			end
-		end
-
-		::continue::
-	end
-
-	return formatters_by_ft
+	return self:_group_lang_field_by_ft("formatters")
 end
 
 ---Returns a table of LazySpecs to inject in to the Lazy plugin setup
@@ -91,30 +93,36 @@ end
 function M:get_lang_plugin_specs()
 	local plugs = {}
 	for _, spec in pairs(self.specs) do
-		local plugins = spec.plugins
 		if spec.plugins == nil then
 			goto continue
 		end
 
+		-- If 'AUTO' specified, then load the plugins from the derived (using
+		-- the spec name) Lua module.
+		local plugins = spec.plugins
 		if type(spec.plugins) == "string" and spec.plugins == "AUTO" then
 			plugins = require("plugins.lang." .. spec.name) ---@type LazySpec[]
-		elseif type(plugins) ~= "table" then
-			error(
-				"unable to process "
-					.. spec.name
-					.. " lang spec: plugin spec invalid (expected table): "
-					.. vim.inspect(plugins)
-			)
 		end
 
+		if type(plugins) ~= "table" then
+			local err = string.format(
+				"Unable to process %q language spec: plugin spec invalid (expected table): %s",
+				spec.name,
+				vim.inspect(plugins)
+			)
+			error(err)
+		end
+
+		-- Iterate over the plugins specified. If any contain a 'filetype' Lazy-loading
+		-- directive, raise an error to protect against an accidental programming error.
 		for _, plug in pairs(plugins) do
 			if plug.ft ~= nil then
-				error(
-					"unable to process "
-						.. spec.name
-						.. " language spec: plugin spec declared filetype: "
-						.. vim.inspect(spec)
+				local err = string.format(
+					"Unable to process %q language spec: plugin spec declared filetype: %s",
+					spec.name,
+					vim.inspect(spec)
 				)
+				error(err)
 			end
 
 			plug.ft = spec.ft
@@ -135,12 +143,17 @@ function M:initialise()
 	end
 	self.initialised = true
 
+	local raise = function(format, ...)
+		local err = string.format(format, ...)
+		error("failed to initialise LSP manager: " .. err, 3)
+	end
+
 	local name_set = {}
 	for _, spec in pairs(self.specs) do
 		if spec.name == nil then
-			error("spec is missing name: " .. vim.inspect(spec))
+			raise("language spec is missing name: %s", vim.inspect(spec))
 		elseif name_set[spec.name] then
-			error("duplicate spec name '" .. spec.name .. "'. duplicate: " .. vim.inspect(spec))
+			raise("duplicate spec name %q. duplicate spec: %s", spec.name, vim.inspect(spec))
 		end
 		name_set[spec.name] = true
 
@@ -150,7 +163,7 @@ function M:initialise()
 				require("lspconfig." .. spec.name)
 			end
 		elseif type(on_load) ~= "function" and on_load ~= nil then
-			vim.notify("Language spec '" .. spec.name .. "' specified invalid post_load_hook", vim.log.levels.ERROR)
+			raise("language spec %q specified invalid post_load_hook (type %s)", spec.name, type(spec.post_load_hook))
 		end
 
 		vim.api.nvim_create_autocmd("FileType", {

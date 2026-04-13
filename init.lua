@@ -1,6 +1,11 @@
 --[[
--- NeoVim configuration files. Handles plugin initialisation and configuration
--- using Vim-Plug and some basic Vim-based configuration.
+-- NeoVim configuration files. Handles plugin initialisation and configuration.
+--
+-- Notable plugins:
+-- - Lazy.nvim for Plugin management
+-- - Mason for LSP and other tool installation
+-- - Conform for formatting support
+-- - nvim-lint for linting support
 --
 -- Written by Harry Felton (https://github.com/hbomb79). Freely
 -- distributable.
@@ -24,8 +29,11 @@ vim.opt.rtp:prepend(lazypath)
 
 require("settings")
 
--- LSP initialisation. This configuration uses a centralized table to store all
--- language specific specifications. Refer to the LangSpec type for more information
+-- Language initialisation. This NeoVim configuration uses a centralized registry
+-- to store all language specific 'specifications'.
+-- These specifications contain the plugins, linters, formatters, etc. Refer to the
+-- LangSpec type for more information
+---@see LangSpec
 local lsp = require("lsp")
 lsp:add_specs({
 

@@ -20,7 +20,6 @@ return {
 		"glepnir/dashboard-nvim",
 		event = "VimEnter",
 		config = true,
-		dependencies = { "nvim-tree/nvim-web-devicons" },
 	},
 	{
 		"tpope/vim-commentary",
@@ -71,9 +70,6 @@ return {
 		keys = {
 			{ "<leader>u", "<cmd>lua require('undotree').toggle()<cr>", desc = "Undo tree" },
 		},
-	},
-	{
-		"tris203/precognition.nvim",
 	},
 	{
 		"kevinhwang91/nvim-bqf",

@@ -1,4 +1,3 @@
--- Centralized LSP management. Refer to root init.lua for configured languages.
 local M = {
 	initialised = false,
 
@@ -15,113 +14,79 @@ local M = {
 	---@type LangSpec[]
 	specs = {},
 
+	---@class AttachOptions
+	---@field auto_hover boolean? Whether to trigger the 'document_highlight' LSP function when the cursor stops moving. Default to true
+	---@field whichkey_binding boolean? Whether to create standard LSP keybindings for this buffer
+
 	---@alias LspHandler fun(client: vim.lsp.Client, buffer: number): AttachOptions?
 	---@type { [string]: LspHandler }
 	handlers = {},
 }
 
----Adds a language specification to the LSP manager.
----@param spec LangSpec
-function M:add_spec(spec)
+---@type vim.diagnostic.Opts
+local default_diagnostics_config = {
+	virtual_text = {
+		prefix = "",
+		spacing = 0,
+	},
+	signs = {
+		text = {
+			[vim.diagnostic.severity.ERROR] = "",
+			[vim.diagnostic.severity.WARN] = "",
+			[vim.diagnostic.severity.HINT] = "",
+			[vim.diagnostic.severity.INFO] = "",
+		},
+		numhl = {
+			[vim.diagnostic.severity.ERROR] = "DiagnosticError",
+			[vim.diagnostic.severity.WARN] = "DiagnosticWarn",
+			[vim.diagnostic.severity.HINT] = "DiagnosticHint",
+			[vim.diagnostic.severity.INFO] = "DiagnosticInfo",
+		},
+	},
+	underline = true,
+	severity_sort = true,
+}
+
+-- Initialises the LSP registry. This includes (but isn't limited to):
+-- - Processing and validating all registered languages
+-- - Creating an autocmd for LSPAttach
+-- - Configuring global LSP config (signs, diagnostic config)
+function M:initialise()
 	if self.initialised then
-		error("cannot call :add_spec() after :initialise()")
+		return
 	end
 
-	if type(spec.ft) ~= "table" or #spec.ft == 0 then
-		local err = string.format(
-			"error adding spec: ft must be a non-empty table of filetypes, but found: %s for spec %s",
-			vim.inspect(spec.ft),
-			vim.inspect(spec)
-		)
-		error(err, 2)
-	end
+	self:_initialise_langs()
+	self.initialised = true
 
-	if spec.name == nil then
-		spec.name = spec.ft[1]
-	end
+	-- Remove default LSP mappings that conflict with our own
+	vim.keymap.del("n", "gri")
+	vim.keymap.del("n", "grt")
+	vim.keymap.del("n", "gO")
+	pcall(vim.keymap.del, "n", "grr")
+	pcall(vim.keymap.del, "n", "gra")
+	pcall(vim.keymap.del, "n", "grn")
 
-	table.insert(self.specs, spec)
-end
+	local grp = vim.api.nvim_create_augroup("UserLspConfig", {})
+	vim.api.nvim_create_autocmd("LspAttach", {
+		group = grp,
+		callback = function(tbl)
+			local bufnr = tbl.buf
+			local clients = vim.lsp.get_clients({ bufnr = bufnr })
+			for _, client in pairs(clients) do
+				local attachOptions = nil
+				local typeHandler = self.handlers[client.name]
+				if type(typeHandler) == "function" then
+					local o = typeHandler(client, bufnr)
+					attachOptions = o
+				end
 
----Iterates over all language specs and extracts the value of the given field (if any) and
----collates the values using the filetype of the language. For example, can be used to get all
----the linters grouped by the filetype they act on.
----
----@param field string
----@return { [string]: string[] }
-function M:_group_lang_field_by_ft(field)
-	---@type {[string]: string[]}
-	local field_by_ft = {}
-
-	for _, v in pairs(self.specs) do
-		if v[field] == nil then
-			goto continue
-		end
-
-		for _, ft in pairs(v.ft) do
-			field_by_ft[ft] = field_by_ft[ft] or {}
-
-			for _, val in pairs(v[field]) do
-				table.insert(field_by_ft[ft], val)
+				self:common_on_attach(bufnr, client, attachOptions)
 			end
-		end
+		end,
+	})
 
-		::continue::
-	end
-
-	return field_by_ft
-end
-
----Uses the registered languages to construct linters for use with nvim-lint.
----@return { [string]: string[] }
-function M:get_lang_linters()
-	return self:_group_lang_field_by_ft("linters")
-end
-
----Uses the registered languages to construct formatters_by_ft for use with Conform.
----@return { [string]: string[] }
-function M:get_lang_formatters()
-	return self:_group_lang_field_by_ft("formatters")
-end
-
----Returns a table of LazySpecs to inject in to the Lazy plugin setup
----@return LazySpec[]
-function M:get_lang_plugin_specs()
-	local plugs = {}
-	for _, spec in pairs(self.specs) do
-		if spec.plugins == nil then
-			goto continue
-		end
-
-		if type(spec.plugins) ~= "table" then
-			local err = string.format(
-				"Unable to process %q language spec: plugin spec invalid (expected table): %s",
-				spec.name,
-				vim.inspect(spec.plugins)
-			)
-			error(err)
-		end
-
-		-- Iterate over the plugins specified. If any contain a 'filetype' Lazy-loading
-		-- directive, raise an error to protect against an accidental programming error.
-		for _, plug in pairs(spec.plugins) do
-			if plug.ft ~= nil then
-				local err = string.format(
-					"Unable to process %q language spec: plugin spec declared filetype: %s",
-					spec.name,
-					vim.inspect(spec)
-				)
-				error(err)
-			end
-
-			plug.ft = spec.ft
-			table.insert(plugs, plug)
-		end
-
-		::continue::
-	end
-
-	return plugs
+	vim.diagnostic.config(default_diagnostics_config)
 end
 
 ---Initialised language specifications by enumerating the files in the 'langs'
@@ -196,106 +161,6 @@ function M:_initialise_langs()
 	end
 end
 
--- Initialises the plugin manager by creating an autocmd on the
--- LspAttach event, and configuring the global LSP settings/handlers.
-function M:initialise()
-	if self.initialised then
-		return
-	end
-
-	self:_initialise_langs()
-	self.initialised = true
-
-	-- Remove default LSP mappings that conflict with our own
-	vim.keymap.del("n", "gri")
-	vim.keymap.del("n", "grt")
-	vim.keymap.del("n", "gO")
-	pcall(vim.keymap.del, "n", "grr")
-	pcall(vim.keymap.del, "n", "gra")
-	pcall(vim.keymap.del, "n", "grn")
-
-	vim.diagnostic.config({ virtual_text = true, severity_sort = true })
-
-	local grp = vim.api.nvim_create_augroup("UserLspConfig", {})
-	vim.api.nvim_create_autocmd("LspAttach", {
-		group = grp,
-		callback = function(tbl)
-			self:buffer_attach(tbl.buf)
-		end,
-	})
-
-	vim.fn.sign_define(
-		"LspDiagnosticsSignError",
-		{ texthl = "LspDiagnosticsSignError", text = "", numhl = "LspDiagnosticsSignError" }
-	)
-	vim.fn.sign_define(
-		"LspDiagnosticsSignWarning",
-		{ texthl = "LspDiagnosticsSignWarning", text = "", numhl = "LspDiagnosticsSignWarning" }
-	)
-	vim.fn.sign_define(
-		"LspDiagnosticsSignHint",
-		{ texthl = "LspDiagnosticsSignHint", text = "", numhl = "LspDiagnosticsSignHint" }
-	)
-	vim.fn.sign_define(
-		"LspDiagnosticsSignInformation",
-		{ texthl = "LspDiagnosticsSignInformation", text = "", numhl = "LspDiagnosticsSignInformation" }
-	)
-
-	vim.diagnostic.config({
-		virtual_text = {
-			prefix = "",
-			spacing = 0,
-		},
-		signs = true,
-		underline = true,
-	})
-
-	-- symbols for autocomplete
-	vim.lsp.protocol.CompletionItemKind = {
-		"   (Text) ",
-		"   (Method)",
-		"   (Function)",
-		"   (Constructor)",
-		" ﴲ  (Field)",
-		"[] (Variable)",
-		"   (Class)",
-		" ﰮ  (Interface)",
-		"   (Module)",
-		" 襁 (Property)",
-		"   (Unit)",
-		"   (Value)",
-		" 練 (Enum)",
-		"   (Keyword)",
-		"   (Snippet)",
-		"   (Color)",
-		"   (File)",
-		"   (Reference)",
-		"   (Folder)",
-		"   (EnumMember)",
-		" ﲀ  (Constant)",
-		" ﳤ  (Struct)",
-		"   (Event)",
-		"   (Operator)",
-		"   (TypeParameter)",
-	}
-end
-
--- Handles an 'LspAttach' event by execting the common on_attach, and any
--- language-server specific handlers (which must have been registered before-hand).
-function M:buffer_attach(buffer)
-	local clients = vim.lsp.get_clients({ bufnr = buffer })
-	for _, client in pairs(clients) do
-		local attachOptions = nil
-		local typeHandler = self.handlers[client.name]
-		if type(typeHandler) == "function" then
-			local o = typeHandler(client, buffer)
-			attachOptions = o
-		end
-
-		self:common_on_attach(buffer, client, attachOptions)
-	end
-end
-
 -- Returns the value for the key provided from the table. If no value
 -- found, the default value is returned instead.
 ---@param options table
@@ -315,9 +180,6 @@ end
 -- anytime a buffer attaches to a language server.
 -- It should be expected that this code could be run multiple times for the
 -- same buffer, and so the code in here should be aware of that.
----@class AttachOptions
----@field auto_hover boolean?
----@field whichkey_binding boolean?
 ---@param opts AttachOptions?
 function M:common_on_attach(buffer, client, opts)
 	vim.notify(
@@ -341,75 +203,69 @@ function M:common_on_attach(buffer, client, opts)
 	end
 
 	if getOptionValue(opts, "whichkey_binding", true) then
-		require("which-key").add({
-			{ "<leader>l", buffer = buffer, group = "LSP" },
-			{ "<leader>lA", "<cmd>lua vim.lsp.codelens.run()<CR>", buffer = buffer, desc = "Code Lens" },
-			{ "<leader>lS", "<cmd>Telescope lsp_workspace_symbols<CR>", buffer = buffer, desc = "Workspace Symbols" },
-			{ "<leader>la", "<cmd>lua vim.lsp.buf.code_action()<CR>", buffer = buffer, desc = "Code Action" },
-			{
-				"<leader>ld",
-				"<cmd>Telescope diagnostics<CR>",
-				buffer = buffer,
-				desc = "Document Diagnostics",
-			},
-			{ "<leader>lf", "<cmd>lua vim.lsp.buf.format()<CR>", buffer = buffer, desc = "Format" },
-			{ "<leader>li", "<cmd>LspInfo<CR>", buffer = buffer, desc = "Info" },
-			{ "<leader>ll", "<cmd>lua vim.diagnostic.open_float()<CR>", buffer = buffer, desc = "Line Diagnostics" },
-			{ "<leader>ln", "<cmd>lua vim.diagnostic.goto_next()<CR>", buffer = buffer, desc = "Next Error" },
-			{ "<leader>lp", "<cmd>lua vim.diagnostic.goto_prev()<CR>", buffer = buffer, desc = "Prev Error" },
-			{ "<leader>lr", "<cmd>lua vim.lsp.buf.rename()<CR>", buffer = buffer, desc = "Rename" },
-			{ "<leader>ls", "<cmd>Telescope lsp_document_symbols<CR>", buffer = buffer, desc = "Document Symbols" },
-		})
-
-		require("which-key").add({
-			{ "g", buffer = buffer, group = "LSP" },
-			{
-				"gD",
-				function()
-					vim.lsp.buf.declaration()
-					-- require("trouble").open("lsp_declarations")
-				end,
-				buffer = buffer,
-				desc = "Declarations",
-			},
-			{
-				"gT",
-				function()
-					vim.lsp.buf.type_definition()
-					-- require("trouble").open("lsp_type_definitions")
-				end,
-				buffer = buffer,
-				desc = "Type Definitions",
-			},
-			{
-				"gd",
-				function()
-					vim.lsp.buf.definition()
-					-- require("trouble").open("lsp_definitions")
-				end,
-				buffer = buffer,
-				desc = "Definitions",
-			},
-			{
-				"gi",
-				function()
-					vim.lsp.buf.implementation()
-					-- require("trouble").open("lsp_implementations")
-				end,
-				buffer = buffer,
-				desc = "Implementations",
-			},
-			{
-				"gr",
-				function()
-					vim.lsp.buf.references()
-					-- require("trouble").open("lsp_references")
-				end,
-				buffer = buffer,
-				desc = "References",
-			},
-		})
+		self:set_buffer_keybinds(buffer)
 	end
+end
+
+-- Adds LSP based keybindings (via which-key) scoped for the buffer provided. This is
+-- typically called automatically when an LSP attaches. Benefit is that LSP-based bindings
+-- are only set for buffers with an LSP attached.
+function M:set_buffer_keybinds(bufnr)
+	require("which-key").add({
+		-- Standard 'Goto' bindings
+		{ "g", buffer = bufnr, group = "LSP Goto" },
+		{ "gD", vim.lsp.buf.declaration, buffer = bufnr, desc = "Declarations" },
+		{ "gT", vim.lsp.buf.type_definition, buffer = bufnr, desc = "Type Definitions" },
+		{ "gd", vim.lsp.buf.definition, buffer = bufnr, desc = "Definitions" },
+		{ "gi", vim.lsp.buf.implementation, buffer = bufnr, desc = "Implementations" },
+		{ "gr", vim.lsp.buf.references, buffer = bufnr, desc = "References" },
+
+		-- LSP bindings
+		{ "<leader>l", buffer = bufnr, group = "LSP" },
+		{ "<leader>lA", "<cmd>lua vim.lsp.codelens.run()<CR>", buffer = bufnr, desc = "Code Lens" },
+		{ "<leader>lS", "<cmd>Telescope lsp_workspace_symbols<CR>", buffer = bufnr, desc = "Workspace Symbols" },
+		{ "<leader>la", "<cmd>lua vim.lsp.buf.code_action()<CR>", buffer = bufnr, desc = "Code Action" },
+		{
+			"<leader>ld",
+			"<cmd>Telescope diagnostics<CR>",
+			buffer = bufnr,
+			desc = "Document Diagnostics",
+		},
+		{ "<leader>lf", "<cmd>lua vim.lsp.buf.format()<CR>", buffer = bufnr, desc = "Format" },
+		{ "<leader>ll", "<cmd>lua vim.diagnostic.open_float()<CR>", buffer = bufnr, desc = "Line Diagnostics" },
+		{ "<leader>ln", "<cmd>lua vim.diagnostic.goto_next()<CR>", buffer = bufnr, desc = "Next Error" },
+		{ "<leader>lp", "<cmd>lua vim.diagnostic.goto_prev()<CR>", buffer = bufnr, desc = "Prev Error" },
+		{ "<leader>lr", "<cmd>lua vim.lsp.buf.rename()<CR>", buffer = bufnr, desc = "Rename" },
+		{ "<leader>ls", "<cmd>Telescope lsp_document_symbols<CR>", buffer = bufnr, desc = "Document Symbols" },
+		{
+			"<leader>li",
+			function()
+				local enabled = vim.lsp.inlay_hint.is_enabled()
+				vim.lsp.inlay_hint.enable(not enabled)
+				vim.notify("Toggled LSP inlay hints " .. (not enabled and "on" or "off"))
+			end,
+			buffer = bufnr,
+			desc = "Toggle inlay hints",
+		},
+		{
+			"<leader>lL",
+			function()
+				-- Toggle between lines or just simple virtual text for LSP diagnostics by reading
+				-- the current value and flipping it.
+				-- Note that while this keybinding is scoped to this buffer, the diagnostic.config is global
+				-- to the Neovim session.
+				local lines_enabled = vim.diagnostic.config().virtual_lines
+				vim.diagnostic.config({
+					virtual_lines = not lines_enabled,
+					virtual_text = (lines_enabled and default_diagnostics_config.virtual_text or false),
+				})
+
+				vim.notify("Toggled LSP virtual lines " .. (not lines_enabled and "on" or "off"))
+			end,
+			buffer = bufnr,
+			desc = "Toggle virtual lines",
+		},
+	})
 end
 
 ---Sets a function to run whenever the LSP specified attaches to a buffer. The
@@ -429,21 +285,125 @@ function M:set_handler(lspName, handler)
 	self.handlers[lspName] = handler
 end
 
--- There is a bug for when an LSP is lazy-loaded
--- due to filetype plugin triggering the LSP config after the buffer
--- has been loaded. This snippet can be called _after_ setup of the LSP
--- to trigger the 'FileType' event on all the buffers; this will encourage
--- any new LSPs to attach.
-function M:notify_new_lsp()
-	vim.schedule(function()
-		for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
-			local valid = vim.api.nvim_buf_is_valid(bufnr) and vim.bo[bufnr].buflisted
-			if valid and vim.bo[bufnr].buftype == "" then
-				local augroup_lspconfig = vim.api.nvim_create_augroup("lspconfig", { clear = false })
-				vim.api.nvim_exec_autocmds("FileType", { group = augroup_lspconfig, buffer = bufnr })
+---Adds a language specification to the LSP manager.
+---@param spec LangSpec
+function M:add_spec(spec)
+	if self.initialised then
+		error("cannot call :add_spec() after :initialise()")
+	end
+
+	if type(spec.ft) ~= "table" or #spec.ft == 0 then
+		local err = string.format(
+			"error adding spec: ft must be a non-empty table of filetypes, but found: %s for spec %s",
+			vim.inspect(spec.ft),
+			vim.inspect(spec)
+		)
+		error(err, 2)
+	end
+
+	if spec.name == nil then
+		spec.name = spec.ft[1]
+	end
+
+	table.insert(self.specs, spec)
+end
+
+---Uses the registered languages to construct linters for use with nvim-lint.
+---@return { [string]: string[] }
+function M:get_lang_linters()
+	return self:_group_lang_field_by_ft("linters")
+end
+
+---Uses the registered languages to construct formatters_by_ft for use with Conform.
+---@return { [string]: string[] }
+function M:get_lang_formatters()
+	return self:_group_lang_field_by_ft("formatters")
+end
+
+---Returns a table of LazySpecs to inject in to the Lazy plugin setup
+---@return LazySpec[]
+function M:get_lang_plugin_specs()
+	local plugs = {}
+	for _, spec in pairs(self.specs) do
+		if spec.plugins == nil then
+			goto continue
+		end
+
+		if type(spec.plugins) ~= "table" then
+			local err = string.format(
+				"Unable to process %q language spec: plugin spec invalid (expected table): %s",
+				spec.name,
+				vim.inspect(spec.plugins)
+			)
+			error(err)
+		end
+
+		-- Iterate over the plugins specified. If any contain a 'filetype' Lazy-loading
+		-- directive, raise an error to protect against an accidental programming error.
+		for _, plug in pairs(spec.plugins) do
+			if plug.ft ~= nil then
+				local err = string.format(
+					"Unable to process %q language spec: plugin spec declared filetype: %s",
+					spec.name,
+					vim.inspect(spec)
+				)
+				error(err)
+			end
+
+			plug.ft = spec.ft
+			table.insert(plugs, plug)
+		end
+
+		::continue::
+	end
+
+	return plugs
+end
+
+---Iterates over all language specs and extracts the value of the given field (if any) and
+---collates the values using the filetype of the language. For example, can be used to get all
+---the linters grouped by the filetype they act on.
+---
+---@param field string
+---@return { [string]: string[] }
+function M:_group_lang_field_by_ft(field)
+	---@type {[string]: string[]}
+	local field_by_ft = {}
+
+	for _, v in pairs(self.specs) do
+		if v[field] == nil then
+			goto continue
+		end
+
+		for _, ft in pairs(v.ft) do
+			field_by_ft[ft] = field_by_ft[ft] or {}
+
+			for _, val in pairs(v[field]) do
+				table.insert(field_by_ft[ft], val)
 			end
 		end
-	end)
+
+		::continue::
+	end
+
+	return field_by_ft
 end
+
+-- -- There is a bug for when an LSP is lazy-loaded
+-- -- due to filetype plugin triggering the LSP config after the buffer
+-- -- has been loaded. This snippet can be called _after_ setup of the LSP
+-- -- to trigger the 'FileType' event on all the buffers; this will encourage
+-- -- any new LSPs to attach.
+-- function M:notify_new_lsp()
+-- 	vim.schedule(function()
+-- 		for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+-- 			local valid = vim.api.nvim_buf_is_valid(bufnr) and vim.bo[bufnr].buflisted
+-- 			if valid and vim.bo[bufnr].buftype == "" then
+-- 				local augroup_lspconfig = vim.api.nvim_create_augroup("lspconfig", { clear = false })
+-- 				vim.api.nvim_exec_autocmds("FileType", { group = augroup_lspconfig, buffer = bufnr })
+-- 			end
+-- 		end
+-- 	end)
+-- end
 
 return M

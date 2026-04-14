@@ -45,7 +45,7 @@ return {
 			require("neogit").setup({
 				disable_signs = true,
 				graph_style = "unicode",
-				kind = "split",
+				kind = "split_below_all",
 				console_timeout = 5000,
 				integrations = {
 					telescope = true,

@@ -9,6 +9,7 @@ local M = {
 	---@field linters? string[] Specify linters to setup using nvim-lint.
 	---@field on_load? function A function to call the FIRST time a file is opened which matches the languages filetype.
 	---@field mason_auto_install? table The Mason LSP(s) to auto-install for this language. Note: formatters are auto-installed using mason-conform, so only LSPs/linters need to be specified here
+	---@field ts_lang? string The Treesitter language to auto-start (or auto-install, if missing) when files matching the filetype(s) specified are opened
 	---}
 
 	---@type LangSpec[]
@@ -158,7 +159,56 @@ function M:_initialise_langs()
 				end
 			end,
 		})
+
+		local language = spec.ts_lang or spec.ft[1]
+		vim.api.nvim_create_autocmd("FileType", {
+			pattern = spec.ft,
+			callback = function(ev)
+				self:handle_treesitter_language(language, ev.buf)
+			end,
+		})
 	end
+end
+
+--- Auto-installs the treesitter parser for the language provided (if not already installed),
+--- and then enables/starts the parser for the buffer provided. Intended to be called
+--- from an AutoCmd when a file is opened.
+---
+--- @param language string The language to install/enable
+--- @param bufnr number The buffer to enable/start the parser for
+function M:handle_treesitter_language(language, bufnr)
+	local treesitter = require("nvim-treesitter")
+	if not vim.list_contains(treesitter.get_installed(), language) then
+		if vim.fn.executable("tree-sitter") ~= 1 then
+			vim.notify(
+				string.format(
+					"Treesitter language for %q not found, but tree-sitter CLI not installed. Parsers cannot be installed.",
+					language
+				),
+				vim.log.levels.ERROR
+			)
+			return
+		end
+
+		if not vim.list_contains(treesitter.get_available(), language) then
+			vim.notify(
+				string.format(
+					"Treesitter lang %q not found and cannot be installed (not available via Treesitter)",
+					language
+				),
+				vim.log.levels.WARN
+			)
+			return
+		end
+
+		treesitter.install(language):wait()
+	end
+
+	vim.treesitter.start(bufnr, language)
+	vim.notify(
+		string.format("Started treesitter highlighting for language %q on buffer %d", language, bufnr),
+		vim.log.levels.DEBUG
+	)
 end
 
 -- Returns the value for the key provided from the table. If no value

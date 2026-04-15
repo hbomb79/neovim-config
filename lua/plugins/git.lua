@@ -1,11 +1,6 @@
 return {
-	{
-		"lewis6991/gitsigns.nvim",
-		config = true,
-	},
-	{
-		"f-person/git-blame.nvim",
-	},
+	{ "lewis6991/gitsigns.nvim", opts = {} },
+	{ "f-person/git-blame.nvim", opts = {} },
 	{
 		"sindrets/diffview.nvim",
 		cmd = { "DiffviewOpen", "DiffviewFileHistory" },

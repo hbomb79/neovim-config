@@ -1,37 +1,6 @@
 return {
 	{
 		"nvim-treesitter/nvim-treesitter",
-		config = function()
-			---@diagnostic disable-next-line: missing-fields
-			require("nvim-treesitter.configs").setup({
-				incremental_selection = {
-					enable = true,
-					keymaps = {
-						init_selection = "gnn", -- set to `false` to disable one of the mappings
-						node_incremental = "grn",
-						scope_incremental = "grc",
-						node_decremental = "grm",
-					},
-				},
-				ensure_installed = {
-					"go",
-					"scala",
-					"ocaml",
-					"angular",
-					"typescript",
-					"javascript",
-					"css",
-					"scss",
-					"markdown",
-					"html",
-					"lua",
-					"luadoc",
-					"gitcommit",
-				},
-				auto_install = true,
-				highlight = { enable = true },
-			})
-		end,
 		dependencies = {
 			{
 				"nvim-treesitter/nvim-treesitter-context",
@@ -51,77 +20,104 @@ return {
 		dependencies = { "nvim-treesitter/nvim-treesitter" },
 		keys = "%",
 	},
-	{
-		"windwp/nvim-ts-autotag",
-		dependencies = { "nvim-treesitter/nvim-treesitter" },
-		ft = { "html", "svelte", "astro" },
-	},
-	{
-		"nvim-treesitter/playground",
-		dependencies = { "nvim-treesitter/nvim-treesitter" },
-		cmd = "TSPlaygroundToggle",
-	},
+	-- {
+	-- 	"windwp/nvim-ts-autotag",
+	-- 	dependencies = { "nvim-treesitter/nvim-treesitter" },
+	-- 	ft = { "html", "svelte", "astro" },
+	-- },
 	{
 		"nvim-treesitter/nvim-treesitter-textobjects",
 		dependencies = { "nvim-treesitter/nvim-treesitter" },
 		config = function()
-			---@diagnostic disable-next-line: missing-fields
-			require("nvim-treesitter.configs").setup({
+			require("nvim-treesitter-textobjects").setup({
 				textobjects = {
 					select = {
 						enable = true,
 						lookahead = true,
-						keymaps = {
-							["af"] = { query = "@function.outer", desc = "Around Function" },
-							["if"] = { query = "@function.inner", desc = "Inside Function" },
-							["ac"] = { query = "@class.outer", desc = "Around Class" },
-							["ic"] = { query = "@class.inner", desc = "Inside Class" },
-							["as"] = { query = "@scope", query_group = "locals", desc = "Around Scope" },
-						},
 						include_surrounding_whitespace = true,
 					},
 					swap = {
 						enable = true,
-						swap_next = { ["<leader>a"] = "@parameter.inner" },
-						swap_previous = { ["<leader>A"] = "@parameter.inner" },
 					},
 					move = {
 						enable = true,
 						set_jumps = true,
-						goto_next_start = {
-							["]n"] = { query = "@function.outer", desc = "Next fn start" },
-							["]]"] = { query = "@class.outer", desc = "Next class" },
-							-- You can pass a query group to use query from `queries/<lang>/<query_group>.scm file in your runtime path.
-							-- Below example nvim-treesitter's `locals.scm` and `folds.scm`. They also provide highlights.scm and indent.scm.
-							["]s"] = { query = "@scope", query_group = "locals", desc = "Next scope" },
-							["]z"] = { query = "@fold", query_group = "folds", desc = "Next fold" },
-						},
-						goto_next_end = {
-							["]M"] = { query = "@function.outer", desc = "Next fn end" },
-							["]["] = { query = "@class.outer", desc = "Next class end" },
-						},
-						goto_previous_start = {
-							["[n"] = { query = "@function.outer", desc = "Prev fn start" },
-							["[["] = { query = "@class.outer", desc = "Prev class start" },
-						},
-						goto_previous_end = {
-							["[M"] = { query = "@function.outer", desc = "Prev fn end" },
-							["[]"] = { query = "@class.outer", desc = "Prev class end" },
-						},
 					},
 				},
 			})
 
 			-- Make treesitter-related movements repeatable using the standard ; and ,
-			local ts_repeat_move = require("nvim-treesitter.textobjects.repeatable_move")
+			local ts_repeat_move = require("nvim-treesitter-textobjects.repeatable_move")
 			vim.keymap.set({ "n", "x", "o" }, ";", ts_repeat_move.repeat_last_move_next)
 			vim.keymap.set({ "n", "x", "o" }, ",", ts_repeat_move.repeat_last_move_previous)
 
-			-- Optionally, make builtin f, F, t, T also repeatable with ; and ,
+			-- The above overwrites the builtin repeat bindings, so add them back.
+			-- This is useful because unlike the builtin option, we can use this mechanism to repeat any
+			-- action we like (such as moving between Git hunks or LSP diagnostics).
 			vim.keymap.set({ "n", "x", "o" }, "f", ts_repeat_move.builtin_f_expr, { expr = true })
 			vim.keymap.set({ "n", "x", "o" }, "F", ts_repeat_move.builtin_F_expr, { expr = true })
 			vim.keymap.set({ "n", "x", "o" }, "t", ts_repeat_move.builtin_t_expr, { expr = true })
 			vim.keymap.set({ "n", "x", "o" }, "T", ts_repeat_move.builtin_T_expr, { expr = true })
+
+			-- [[ Select bindings ]] --
+			local ts_select = require("nvim-treesitter-textobjects.select")
+			vim.keymap.set({ "x", "o" }, "af", function()
+				ts_select.select_textobject("@function.outer", "textobjects")
+			end, { desc = "Inside function" })
+			vim.keymap.set({ "x", "o" }, "if", function()
+				ts_select.select_textobject("@function.inner", "textobjects")
+			end, { desc = "Around function" })
+			vim.keymap.set({ "x", "o" }, "ac", function()
+				ts_select.select_textobject("@class.outer", "textobjects")
+			end, { desc = "Around class" })
+			vim.keymap.set({ "x", "o" }, "ic", function()
+				ts_select.select_textobject("@class.inner", "textobjects")
+			end, { desc = "Inside class" })
+
+			-- [[ Swap bindings ]] --
+			local ts_swap = require("nvim-treesitter-textobjects.swap")
+			vim.keymap.set("n", "<leader>a", function()
+				ts_swap.swap_next("@parameter.inner")
+			end, { desc = "Swap param next" })
+			vim.keymap.set("n", "<leader>A", function()
+				ts_swap.swap_previous("@parameter.inner")
+			end, { desc = "Swap param prev" })
+
+			-- [[ Move bindings ]] --
+			-- You can use the capture groups defined in `textobjects.scm`
+			local ts_move = require("nvim-treesitter-textobjects.move")
+			vim.keymap.set({ "n", "x", "o" }, "]m", function()
+				ts_move.goto_next_start("@function.outer", "textobjects")
+			end, { desc = "Next fn start" })
+			vim.keymap.set({ "n", "x", "o" }, "]]", function()
+				ts_move.goto_next_start("@class.outer", "textobjects")
+			end, { desc = "Next class start" })
+
+			-- You can also pass a list to group multiple queries.
+			vim.keymap.set({ "n", "x", "o" }, "]o", function()
+				ts_move.goto_next_start({ "@loop.inner", "@loop.outer" }, "textobjects")
+			end, { desc = "Next loop start" })
+
+			vim.keymap.set({ "n", "x", "o" }, "]M", function()
+				ts_move.goto_next_end("@function.outer", "textobjects")
+			end, { desc = "Next function end" })
+			vim.keymap.set({ "n", "x", "o" }, "][", function()
+				ts_move.goto_next_end("@class.outer", "textobjects")
+			end, { desc = "Next class end" })
+
+			vim.keymap.set({ "n", "x", "o" }, "[m", function()
+				ts_move.goto_previous_start("@function.outer", "textobjects")
+			end, { desc = "Prev fn start" })
+			vim.keymap.set({ "n", "x", "o" }, "[[", function()
+				ts_move.goto_previous_start("@class.outer", "textobjects")
+			end, { desc = "Prev class start" })
+
+			vim.keymap.set({ "n", "x", "o" }, "[M", function()
+				ts_move.goto_previous_end("@function.outer", "textobjects")
+			end, { desc = "Prev fn end" })
+			vim.keymap.set({ "n", "x", "o" }, "[]", function()
+				ts_move.goto_previous_end("@class.outer", "textobjects")
+			end, { desc = "Prev class end" })
 		end,
 	},
 }

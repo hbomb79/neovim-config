@@ -1,7 +1,9 @@
 -- mini.nvim plugins, listed independently here to better enable
 -- Lazy.nvim dependency management.
 return {
-	{ "nvim-mini/mini.cmdline", opts = {} },
+	{ "nvim-mini/mini.cmdline", opts = {
+		autocorrect = { enable = false },
+	} },
 	{
 		"nvim-mini/mini.icons",
 		opts = {},

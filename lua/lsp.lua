@@ -315,6 +315,16 @@ function M:set_buffer_keybinds(bufnr)
 			buffer = bufnr,
 			desc = "Toggle virtual lines",
 		},
+		{
+			"<leader>lD",
+			function()
+				local enabled = vim.diagnostic.is_enabled()
+				vim.diagnostic.enable(not enabled, { bufnr = 0 })
+				vim.notify("Toggled LSP diagnostics " .. (not enabled and "on" or "off"))
+			end,
+			buffer = bufnr,
+			desc = "Toggle LSP",
+		},
 	})
 end
 

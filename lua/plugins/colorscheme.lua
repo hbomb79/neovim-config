@@ -7,14 +7,18 @@ return {
 		config = function()
 			require("catppuccin").setup({
 				transparent_background = true,
+				float = {
+					transparent = true,
+					solid = false,
+				},
 				flavour = "mocha",
-				term_colors = true,
+				term_colors = false,
 				dim_inactive = {
-					enabled = true,
+					enabled = false,
 					shade = "dark",
 					percentage = 0.15,
 				},
-				default_integrations = true,
+				-- default_integrations = true,
 				integrations = {
 					cmp = true,
 					gitsigns = true,
@@ -28,6 +32,9 @@ return {
 					gitgutter = true,
 					telescope = true,
 					which_key = true,
+					mini = {
+						enabled = true,
+					},
 				},
 			})
 

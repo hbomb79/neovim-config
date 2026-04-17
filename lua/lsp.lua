@@ -67,6 +67,7 @@ function M:initialise()
 	pcall(vim.keymap.del, "n", "grr")
 	pcall(vim.keymap.del, "n", "gra")
 	pcall(vim.keymap.del, "n", "grn")
+	pcall(vim.keymap.del, "n", "grx")
 
 	local grp = vim.api.nvim_create_augroup("UserLspConfig", {})
 	vim.api.nvim_create_autocmd("LspAttach", {

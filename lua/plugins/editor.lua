@@ -1,10 +1,5 @@
 return {
 	{
-		"glepnir/dashboard-nvim",
-		event = "VimEnter",
-		config = true,
-	},
-	{
 		"ThePrimeagen/harpoon",
 		opts = { menu = { width = 120 } },
 		lazy = true,

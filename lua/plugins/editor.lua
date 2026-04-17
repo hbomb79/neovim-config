@@ -230,4 +230,43 @@ return {
 		-- Lazy loading is not recommended because it is very tricky to make it work correctly in all situations.
 		-- lazy = false,
 	},
+	{
+		"petertriho/nvim-scrollbar",
+		dependencies = {
+			"lewis6991/gitsigns.nvim",
+			{ "kevinhwang91/nvim-hlslens", opts = {} },
+		},
+		config = function()
+			local colors = require("catppuccin.palettes").get_palette()
+
+			require("scrollbar").setup({
+				handle = {
+					blend = 40,
+					color = colors.surface1,
+				},
+				marks = {
+					Cursor = {
+						text = "-",
+					},
+					-- Use same signs as diagnostic signs. Refer to lsp.lua
+					Error = { text = { "" }, color = colors.red },
+					Warn = { text = { "" }, color = colors.peach },
+					Info = { text = { "" }, color = colors.lavender },
+					Hint = { text = { "" }, color = colors.teal },
+
+					-- Use same signs as gitsigns in the signcolumn
+					GitAdd = { text = "│", color = colors.green },
+					GitChange = { text = "│", color = colors.yellow },
+					GitDelete = { text = "-", color = colors.red },
+				},
+				handlers = {
+					gitsigns = true,
+					search = true,
+				},
+				excluded_filetypes = {
+					"dashboard",
+				},
+			})
+		end,
+	},
 }

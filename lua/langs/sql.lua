@@ -1,5 +1,5 @@
 -- Register SQL support. Auto-installs sqlfluff linter.
-require("lsp"):add_spec({
+require("langs"):add_spec({
 	ft = { "sql" },
 
 	linters = { "sqlfluff" },

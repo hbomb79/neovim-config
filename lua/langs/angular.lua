@@ -1,6 +1,6 @@
 -- Register spec for front-end Angular development. It is expected that this
 -- language spec be used in concert with the typescript spec, which loads typescript-tools.nvim
-require("lsp"):add_spec({
+require("langs"):add_spec({
 	name = "angular",
 	ft = { "typescript", "htmlangular" },
 
@@ -13,7 +13,7 @@ require("lsp"):add_spec({
 		---- Register custom on_attach behaviour for Angular as the language server
 		---- exposes some specific keybindings we'd like to use. We still want the
 		---- standard 'common' on_attach though.
-		require("lsp"):set_handler(
+		require("langs"):set_handler(
 			"angularls",
 			---@param bufnr number
 			function(_, bufnr)

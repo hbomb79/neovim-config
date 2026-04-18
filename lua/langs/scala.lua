@@ -1,7 +1,7 @@
 -- Register Scala language tools. Some fairly extensive bootstrapping occurs
 -- in the post load hook, mainly to fix a bug which broke diagnostics.
 
-require("lsp"):add_spec({
+require("langs"):add_spec({
 	ft = { "scala", "sbt" },
 
 	plugins = {
@@ -57,7 +57,7 @@ require("lsp"):add_spec({
 	on_load = function()
 		-- Register custom metals LSP handler which will
 		-- populate some special keybinds for metals-specific commands
-		require("lsp"):set_handler("metals", function(_, bufnr)
+		require("langs"):set_handler("metals", function(_, bufnr)
 			require("which-key").add({
 				{ "<leader>m", buffer = bufnr, group = "Scala Metals" },
 				{

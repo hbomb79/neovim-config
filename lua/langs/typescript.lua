@@ -1,7 +1,8 @@
-require("lsp"):add_spec({
+require("langs"):add_spec({
 	ft = { "typescript", "javascript" },
 
 	formatters = { "prettierd" },
+	mason_auto_install = { "prettierd" },
 
 	plugins = {
 		{
@@ -19,7 +20,7 @@ require("lsp"):add_spec({
 	on_load = function()
 		local prettier_found = #(vim.fs.find(".prettierrc.json", { upward = true, stop = vim.uv.os_homedir() })) ~= 0
 
-		require("lsp"):set_handler(
+		require("langs"):set_handler(
 			"typescript-tools",
 			---@param client vim.lsp.Client
 			---@param bufnr integer

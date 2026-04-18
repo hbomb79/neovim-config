@@ -1,24 +1,20 @@
 return {
+	-- Automatically enables LSPs (e.g. vim.lsp.enable) which have been installed via Mason. Eagerly loaded.
 	{
-		"neovim/nvim-lspconfig",
-		{
-			"williamboman/mason.nvim",
-			config = true,
+		"williamboman/mason-lspconfig.nvim",
+		opts = {},
+		dependencies = {
+			-- Used to manage installs of various binaries for formatting, linting, LSPs, etc.
+			{ "williamboman/mason.nvim", opts = {} },
+
+			-- Updates the built-in LSP configs with those from GitHub. This isn't
+			-- strictly required anymore (since v0.11), but is a nice to have.
+			{ "neovim/nvim-lspconfig" },
 		},
-		{
-			"williamboman/mason-lspconfig.nvim",
-			opts = {
-				automatic_installation = { exclude = { "gopls", "rust_analyzer" } },
-				automatic_enable = true,
-			},
-			dependencies = { "williamboman/mason.nvim" },
-			config = true,
-		},
-		-- Ensure both mason and mason-lspconfig are loaded BEFORE we do any language/LSP setup by disabling lazy.
-		-- This is basically the case anyway due to the lazy loading of the lang plugins based on filetype
-		lazy = false,
 		priority = 1000,
 	},
+
+	-- LSP progress updates in the bottom-right corner of the editor.
 	{
 		"j-hui/fidget.nvim",
 		event = "LspAttach",
@@ -31,21 +27,28 @@ return {
 				},
 			},
 			notification = {
-				window = {
-					winblend = 0,
-				},
+				window = { winblend = 0 },
 			},
 		},
 	},
+
+	-- Provides popup information about a method/function signature as you
+	-- type the arguments in. Very handy!
 	{
 		"ray-x/lsp_signature.nvim",
-		event = "VeryLazy",
+		event = "InsertEnter",
 		opts = { hint_enable = false },
 	},
+
+	-- Automatic linting of files on buffer write. Linters to use are provided
+	-- by the language specs (in the 'langs' dir).
 	{
 		"mfussenegger/nvim-lint",
+		event = { "BufWinEnter", "BufWritePost" },
 		config = function()
-			require("lint").linters_by_ft = require("lsp"):get_lang_linters()
+			require("lint").linters_by_ft = require("langs"):get_linters_by_ft()
+
+			-- Auto lint on save
 			vim.api.nvim_create_autocmd({ "BufWinEnter", "BufWritePost" }, {
 				callback = function()
 					local ok, err = pcall(require("lint").try_lint)
@@ -56,24 +59,19 @@ return {
 			})
 		end,
 	},
+
+	-- Automatic formatting of files on buffer write. Formatters to use are provided
+	-- by the language specs (in the 'langs' dir)
 	{
 		"stevearc/conform.nvim",
-		dependencies = {
-			{
-				-- Auto install formatters if not present, must be loaded AFTER conform (which itself must be loaded AFTER mason.nvim).
-				"zapling/mason-conform.nvim",
-				lazy = false,
-				config = true,
-			},
-		},
+		event = "BufWritePre",
 		opts = {
-			formatters_by_ft = require("lsp"):get_lang_formatters(),
-			format_on_save = {
-				timeout_ms = 2500,
-				lsp_fallback = true,
-			},
+			formatters_by_ft = require("langs"):get_formatters_by_ft(),
+			format_on_save = { timeout_ms = 2500, lsp_fallback = true },
 		},
 	},
+
+	-- Testing framework to run/view tests inside of editor.
 	{
 		"nvim-neotest/neotest",
 		dependencies = {
@@ -81,9 +79,13 @@ return {
 			"nvim-lua/plenary.nvim",
 			"nvim-treesitter/nvim-treesitter",
 			"antoinemadec/FixCursorHold.nvim",
+
+			-- Language specific testing adapters
+			-- TODO: roll-up in to language registry
 			"stevanmilic/neotest-scala",
 			"akinsho/neotest-go",
 		},
+		lazy = true,
 		config = function()
 			---@diagnostic disable-next-line: missing-fields
 			require("neotest").setup({
@@ -91,6 +93,7 @@ return {
 					require("neotest-go")({
 						args = { "-count=1" }, --cache busting
 					}),
+
 					require("neotest-scala")({
 						-- Command line arguments for runner
 						-- Can also be a function to return dynamic values
@@ -108,6 +111,5 @@ return {
 				},
 			})
 		end,
-		lazy = true,
 	},
 }

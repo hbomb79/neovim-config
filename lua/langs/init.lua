@@ -1,14 +1,17 @@
+---@class LanguageRegistry
 local M = {
-	initialised = false,
+	---@type boolean
+	---@private
+	_did_setup = false,
 
 	---@class LangSpec {
 	---@field name? string name of the language. If not specified, then the first filetype is used instead
 	---@field ft string[] the filetypes to associate with this language
-	---@field plugins? LazySpec[] The LazyVim plugin specs. Each will be set to lazy-load for the filetypes specified.
+	---@field plugins? zpack.Spec[] The plugin specs. Each will be set to lazy-load for the filetypes specified.
 	---@field formatters? string[] Specify formatters to setup using Conform.
 	---@field linters? string[] Specify linters to setup using nvim-lint.
-	---@field on_load? function A function to call the FIRST time a file is opened which matches the languages filetype.
-	---@field mason_auto_install? table The Mason LSP(s) to auto-install for this language. Note: formatters are auto-installed using mason-conform, so only LSPs/linters need to be specified here
+	---@field on_load? fun() A function to call the FIRST time a file is opened which matches the languages filetype.
+	---@field mason_auto_install? string[] The Mason LSP(s) to auto-install for this language. Note: formatters are auto-installed using mason-conform, so only LSPs/linters need to be specified here
 	---@field ts_lang? string The Treesitter language to auto-start (or auto-install, if missing) when files matching the filetype(s) specified are opened
 	---}
 
@@ -48,39 +51,33 @@ local default_diagnostics_config = {
 	severity_sort = true,
 }
 
--- Initialises the LSP registry. This includes (but isn't limited to):
--- - Processing and validating all registered languages
--- - Creating an autocmd for LSPAttach
--- - Configuring global LSP config (signs, diagnostic config)
-function M:initialise()
-	if self.initialised then
+--- Initialises the LSP registry. This includes (but isn't limited to):
+---  * Processing and validating all registered languages
+---  * Creating an autocmd for LSPAttach
+---  * Configuring global LSP config (signs, diagnostic config)
+function M:setup()
+	if self._did_setup then
 		return
 	end
 
-	self:_initialise_langs()
-	self.initialised = true
+	self:_setup_langs()
+	self._did_setup = true
 
 	-- Remove default LSP mappings that conflict with our own
-	vim.keymap.del("n", "gri")
-	vim.keymap.del("n", "grt")
-	vim.keymap.del("n", "gO")
-	pcall(vim.keymap.del, "n", "grr")
-	pcall(vim.keymap.del, "n", "gra")
-	pcall(vim.keymap.del, "n", "grn")
-	pcall(vim.keymap.del, "n", "grx")
+	for _, mapping in ipairs({ "gri", "grt", "gO", "grr", "gra", "grn", "grx" }) do
+		vim.keymap.del("n", mapping)
+	end
 
-	local grp = vim.api.nvim_create_augroup("UserLspConfig", {})
+	local g = vim.api.nvim_create_augroup("UserLspConfig", {})
 	vim.api.nvim_create_autocmd("LspAttach", {
-		group = grp,
+		group = g,
 		callback = function(tbl)
 			local bufnr = tbl.buf
 			local clients = vim.lsp.get_clients({ bufnr = bufnr })
 			for _, client in pairs(clients) do
 				local attachOptions = nil
-				local typeHandler = self.handlers[client.name]
-				if type(typeHandler) == "function" then
-					local o = typeHandler(client, bufnr)
-					attachOptions = o
+				if type(self.handlers[client.name]) == "function" then
+					attachOptions = self.handlers[client.name](client, bufnr)
 				end
 
 				self:common_on_attach(bufnr, client, attachOptions)
@@ -91,21 +88,21 @@ function M:initialise()
 	vim.diagnostic.config(default_diagnostics_config)
 end
 
----Initialised language specifications by enumerating the files in the 'langs'
----directory and loading them using 'require'.
-function M:_initialise_langs()
-	-- This NeoVim configuration uses a centralized registry
-	-- to store language 'specifications'. These specifications contain the plugins,
-	-- linters, formatters, etc for each language, and act as a single place to keep all
-	-- configuration pertaining to a given language.
-	--
-	-- Each language specification exists within its own file in the lang directory; the code below
-	-- is responsible for enumerating the files and loading them (via require).
-	-- Each file is expected to register its language specs with the LSP registry.
-
+--- Initialise language specifications by enumerating the files in the 'langs'
+--- directory and loading them using 'require'.
+---
+--- This NeoVim configuration uses a centralized registry
+--- to store language 'specifications'. These specifications contain the plugins,
+--- linters, formatters, etc for each language, and act as a single place to keep all
+--- configuration pertaining to a given language.
+---
+--- Each language specification exists within its own file in this directory; this method
+--- is responsible for enumerating the files and loading them (via require).
+---@private
+function M:_setup_langs()
 	local raise = function(format, ...)
 		local err = string.format(format, ...)
-		error("failed to initialise LSP manager: " .. err, 4)
+		error("Failed to initialise language registry: " .. err, 4)
 	end
 
 	-- 1. Find the langs directory relative to the configuration root of this installation.
@@ -145,15 +142,7 @@ function M:_initialise_langs()
 			pattern = spec.ft,
 			once = true,
 			callback = function()
-				-- If the language spec wants certain LSPs or other tools auto-installed, then
-				-- check for them here and perform the auto install if required.
-				if type(spec.mason_auto_install) == "table" then
-					for _, lsp in pairs(spec.mason_auto_install) do
-						if not require("mason-registry").is_installed(lsp) then
-							vim.fn.execute("MasonInstall " .. lsp)
-						end
-					end
-				end
+				self:mason_auto_install(spec)
 
 				if type(spec.on_load) == "function" then
 					spec.on_load()
@@ -161,7 +150,7 @@ function M:_initialise_langs()
 			end,
 		})
 
-		local language = spec.ts_lang or spec.ft[1]
+		local language = spec.ts_lang or vim.treesitter.language.get_lang(spec.ft[1]) or spec.ft[1]
 		vim.api.nvim_create_autocmd("FileType", {
 			pattern = spec.ft,
 			callback = function(ev)
@@ -171,10 +160,27 @@ function M:_initialise_langs()
 	end
 end
 
+--- Installs any lsps/formatters/etc specified by the language spec via Mason, if
+--- they're not already installed.
+---
+---@param spec LangSpec
+function M:mason_auto_install(spec)
+	if type(spec.mason_auto_install) ~= "table" then
+		return
+	end
+
+	for _, lsp in pairs(spec.mason_auto_install) do
+		if not require("mason-registry").is_installed(lsp) then
+			vim.fn.execute("MasonInstall " .. lsp)
+		end
+	end
+end
+
 --- Auto-installs the treesitter parser for the language provided (if not already installed),
 --- and then enables/starts the parser for the buffer provided. Intended to be called
 --- from an AutoCmd when a file is opened.
 ---
+---@private
 --- @param language string The language to install/enable
 --- @param bufnr number The buffer to enable/start the parser for
 function M:handle_treesitter_language(language, bufnr)
@@ -231,6 +237,8 @@ end
 -- anytime a buffer attaches to a language server.
 -- It should be expected that this code could be run multiple times for the
 -- same buffer, and so the code in here should be aware of that.
+---
+---@private
 ---@param opts AttachOptions?
 function M:common_on_attach(buffer, client, opts)
 	vim.notify(
@@ -258,9 +266,11 @@ function M:common_on_attach(buffer, client, opts)
 	end
 end
 
--- Adds LSP based keybindings (via which-key) scoped for the buffer provided. This is
--- typically called automatically when an LSP attaches. Benefit is that LSP-based bindings
--- are only set for buffers with an LSP attached.
+--- Adds LSP based keybindings (via which-key) scoped for the buffer provided. This is
+--- typically called automatically when an LSP attaches. Benefit is that LSP-based bindings
+--- are only set for buffers with an LSP attached.
+---
+---@private
 function M:set_buffer_keybinds(bufnr)
 	require("which-key").add({
 		-- Standard 'Goto' bindings
@@ -276,17 +286,12 @@ function M:set_buffer_keybinds(bufnr)
 		{ "<leader>lA", "<cmd>lua vim.lsp.codelens.run()<CR>", buffer = bufnr, desc = "Code Lens" },
 		{ "<leader>lS", "<cmd>Telescope lsp_workspace_symbols<CR>", buffer = bufnr, desc = "Workspace Symbols" },
 		{ "<leader>la", "<cmd>lua vim.lsp.buf.code_action()<CR>", buffer = bufnr, desc = "Code Action" },
-		{
-			"<leader>ld",
-			"<cmd>Telescope diagnostics<CR>",
-			buffer = bufnr,
-			desc = "Document Diagnostics",
-		},
+		{ "<leader>ld", "<cmd>Telescope diagnostics<CR>", buffer = bufnr, desc = "Document Diagnostics" },
 		{ "<leader>lf", "<cmd>lua vim.lsp.buf.format()<CR>", buffer = bufnr, desc = "Format" },
 		{ "<leader>ll", "<cmd>lua vim.diagnostic.open_float()<CR>", buffer = bufnr, desc = "Line Diagnostics" },
 		{ "<leader>ln", "<cmd>lua vim.diagnostic.goto_next()<CR>", buffer = bufnr, desc = "Next Error" },
 		{ "<leader>lp", "<cmd>lua vim.diagnostic.goto_prev()<CR>", buffer = bufnr, desc = "Prev Error" },
-		{ "<leader>lr", "<cmd>lua vim.lsp.buf.rename()<CR>", buffer = bufnr, desc = "Rename" },
+		{ "<leader>lr", "<cmd>lua require('renamer').rename({})<CR>", buffer = bufnr, desc = "Rename" },
 		{ "<leader>ls", "<cmd>Telescope lsp_document_symbols<CR>", buffer = bufnr, desc = "Document Symbols" },
 		{
 			"<leader>li",
@@ -329,9 +334,10 @@ function M:set_buffer_keybinds(bufnr)
 	})
 end
 
----Sets a function to run whenever the LSP specified attaches to a buffer. The
----callback is provided with the client and buffer, and can return modifiers which
----impact how the LSP behaves (e.g. disable auto_hover).
+--- Sets a function to run whenever the LSP specified attaches to a buffer. The
+--- callback is provided with the client and buffer, and can return modifiers which
+--- impact how the LSP behaves (e.g. disable auto_hover).
+---
 ---@param handler LspHandler
 function M:set_handler(lspName, handler)
 	if type(handler) ~= "function" then
@@ -346,10 +352,11 @@ function M:set_handler(lspName, handler)
 	self.handlers[lspName] = handler
 end
 
----Adds a language specification to the LSP manager.
+--- Adds a language specification to the LSP registry.
+---
 ---@param spec LangSpec
 function M:add_spec(spec)
-	if self.initialised then
+	if self._did_setup then
 		error("cannot call :add_spec() after :initialise()")
 	end
 
@@ -369,21 +376,24 @@ function M:add_spec(spec)
 	table.insert(self.specs, spec)
 end
 
----Uses the registered languages to construct linters for use with nvim-lint.
+--- Uses the registered languages to construct linters for use with nvim-lint.
+---
 ---@return { [string]: string[] }
-function M:get_lang_linters()
+function M:get_linters_by_ft()
 	return self:_group_lang_field_by_ft("linters")
 end
 
----Uses the registered languages to construct formatters_by_ft for use with Conform.
+--- Uses the registered languages to construct formatters_by_ft for use with Conform.
+---
 ---@return { [string]: string[] }
-function M:get_lang_formatters()
+function M:get_formatters_by_ft()
 	return self:_group_lang_field_by_ft("formatters")
 end
 
----Returns a table of LazySpecs to inject in to the Lazy plugin setup
----@return LazySpec[]
-function M:get_lang_plugin_specs()
+--- Returns a table of LazySpecs to inject in to the Lazy plugin setup
+---
+---@return zpack.Spec[]
+function M:get_plugin_specs()
 	local plugs = {}
 	for _, spec in pairs(self.specs) do
 		if spec.plugins == nil then
@@ -425,6 +435,7 @@ end
 ---collates the values using the filetype of the language. For example, can be used to get all
 ---the linters grouped by the filetype they act on.
 ---
+---@private
 ---@param field string
 ---@return { [string]: string[] }
 function M:_group_lang_field_by_ft(field)
@@ -449,22 +460,5 @@ function M:_group_lang_field_by_ft(field)
 
 	return field_by_ft
 end
-
--- -- There is a bug for when an LSP is lazy-loaded
--- -- due to filetype plugin triggering the LSP config after the buffer
--- -- has been loaded. This snippet can be called _after_ setup of the LSP
--- -- to trigger the 'FileType' event on all the buffers; this will encourage
--- -- any new LSPs to attach.
--- function M:notify_new_lsp()
--- 	vim.schedule(function()
--- 		for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
--- 			local valid = vim.api.nvim_buf_is_valid(bufnr) and vim.bo[bufnr].buflisted
--- 			if valid and vim.bo[bufnr].buftype == "" then
--- 				local augroup_lspconfig = vim.api.nvim_create_augroup("lspconfig", { clear = false })
--- 				vim.api.nvim_exec_autocmds("FileType", { group = augroup_lspconfig, buffer = bufnr })
--- 			end
--- 		end
--- 	end)
--- end
 
 return M

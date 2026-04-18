@@ -1,5 +1,5 @@
 -- Register Elixir support. Auto-installs ElixirLS via Mason
-require("lsp"):add_spec({
+require("langs"):add_spec({
 	ft = { "elixir" },
 	mason_auto_install = { "elixir-ls" },
 
@@ -43,7 +43,7 @@ require("lsp"):add_spec({
 			cmd = { vim.fn.expand("$MASON/packages/elixir-ls/language_server.sh") },
 		})
 
-		require("lsp"):set_handler("ElixirLS", function(_, _)
+		require("langs"):set_handler("ElixirLS", function(_, _)
 			return { auto_hover = false }
 		end)
 	end,

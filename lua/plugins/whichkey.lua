@@ -72,37 +72,15 @@ return {
 			vim.api.nvim_set_keymap("n", "<Space>", "<NOP>", { noremap = true, silent = true })
 
 			-- Window keybinds
-			vim.api.nvim_set_keymap("n", "<C-h>", "<C-w>h", { noremap = true, silent = true })
-			vim.api.nvim_set_keymap("n", "<C-j>", "<C-w>j", { noremap = true, silent = true })
-			vim.api.nvim_set_keymap("n", "<C-k>", "<C-w>k", { noremap = true, silent = true })
-			vim.api.nvim_set_keymap("n", "<C-l>", "<C-w>l", { noremap = true, silent = true })
-			vim.api.nvim_set_keymap("n", "<S-Left>", "<cmd>vertical resize -10<CR>", { noremap = true, silent = true })
-			vim.api.nvim_set_keymap("n", "<S-Right>", "<cmd>vertical resize +10<CR>", { noremap = true, silent = true })
-			vim.api.nvim_set_keymap("n", "<S-Up>", "<cmd>resize +10<CR>", { noremap = true, silent = true })
-			vim.api.nvim_set_keymap("n", "<S-Down>", "<cmd>resize -10<CR>", { noremap = true, silent = true })
-			vim.api.nvim_set_keymap("n", "<S-x>", "<cmd>bdelete<CR>", { noremap = true, silent = true })
-
-			-- Hop.nvim keybinds
-			whichkey.add({
-				{ "<leader>h", group = "Hop" },
-				{
-					"<leader>hc",
-					"<cmd>lua require('hop').hint_char1 {current_line_only = true}<CR>",
-					desc = "Line Char",
-				},
-				{
-					"<leader>hh",
-					"<cmd>lua require('hop').hint_words {current_line_only = true}<CR>",
-					desc = "Line Word",
-				},
-				{
-					"<leader>hC",
-					"<cmd>lua require('hop').hint_char1 {current_line_only = false}<CR>",
-					desc = "Global Char",
-				},
-				{ "<leader>hH", "<cmd>lua require('hop').hint_words()<CR>", desc = "Global Word" },
-				{ "K", "<cmd>lua vim.lsp.buf.hover()<CR>", desc = "LSP Hover" },
-			})
+			vim.keymap.set({ "n", "t" }, "<C-h>", "<cmd>wincmd h<cr>", { noremap = true, silent = true })
+			vim.keymap.set({ "n", "t" }, "<C-j>", "<cmd>wincmd j<cr>", { noremap = true, silent = true })
+			vim.keymap.set({ "n", "t" }, "<C-k>", "<cmd>wincmd k<cr>", { noremap = true, silent = true })
+			vim.keymap.set({ "n", "t" }, "<C-l>", "<cmd>wincmd l<cr>", { noremap = true, silent = true })
+			vim.keymap.set({ "n", "t" }, "<S-Left>", "<cmd>vertical resize -10<CR>", { noremap = true, silent = true })
+			vim.keymap.set({ "n", "t" }, "<S-Right>", "<cmd>vertical resize +10<CR>", { noremap = true, silent = true })
+			vim.keymap.set({ "n", "t" }, "<S-Up>", "<cmd>resize +10<CR>", { noremap = true, silent = true })
+			vim.keymap.set({ "n", "t" }, "<S-Down>", "<cmd>resize -10<CR>", { noremap = true, silent = true })
+			vim.keymap.set({ "n", "t" }, "<S-x>", "<cmd>bdelete<CR>", { noremap = true, silent = true })
 
 			-- Continue the above pattern for plugin provided jumps
 			local gs = require("gitsigns")

@@ -61,7 +61,6 @@ apply(vim.o, {
 	backup = false,
 	writebackup = false,
 	updatetime = 300,
-	timeoutlen = 0,
 	clipboard = "unnamedplus",
 	guifont = "SauceCodePro Nerd Font:h17",
 	foldmethod = "indent",

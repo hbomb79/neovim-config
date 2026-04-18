@@ -3,7 +3,7 @@
 -- is run some code to tweak the behaviour.
 --
 -- Note: The Go tools are excluded from Mason 'ensure_installed'
-require("lsp"):add_spec({
+require("langs"):add_spec({
 	ft = { "go", "gomod" },
 
 	linters = { "golangcilint" },

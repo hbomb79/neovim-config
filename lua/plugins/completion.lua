@@ -1,8 +1,8 @@
 return {
 	"hrsh7th/nvim-cmp",
-	opts = function()
+	config = function()
 		local cmp = require("cmp")
-		return {
+		cmp.setup({
 			preselect = cmp.PreselectMode.None,
 			snippet = {
 				expand = function(args)
@@ -66,7 +66,7 @@ return {
 			experimental = {
 				ghost_text = true,
 			},
-		}
+		})
 	end,
 	dependencies = {
 		"hrsh7th/cmp-nvim-lsp",

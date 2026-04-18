@@ -1,12 +1,12 @@
 return {
 	{ "lewis6991/gitsigns.nvim", opts = {} },
-	{ "f-person/git-blame.nvim", opts = {} },
+	{ "f-person/git-blame.nvim", cmd = "GitBlameToggle", opts = {} },
 	{
 		"sindrets/diffview.nvim",
 		cmd = { "DiffviewOpen", "DiffviewFileHistory" },
-		dependencies = {
-			"folke/which-key.nvim",
-		},
+		-- dependencies = {
+		-- 	"folke/which-key.nvim",
+		-- },
 		config = function()
 			vim.opt.fillchars:append({ diff = "┈" })
 

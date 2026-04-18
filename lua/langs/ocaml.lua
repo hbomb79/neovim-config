@@ -1,5 +1,5 @@
 -- Register OCaml support. Auto installs ocaml-lsp, and applies some buffer-specific overrides
-require("lsp"):add_spec({
+require("langs"):add_spec({
 	ft = { "ocaml" },
 	mason_auto_install = { "ocaml-lsp" },
 
@@ -22,7 +22,7 @@ require("lsp"):add_spec({
 			},
 		})
 
-		require("lsp"):set_handler("ocamllsp", function(_, bufnr)
+		require("langs"):set_handler("ocamllsp", function(_, bufnr)
 			vim.bo[bufnr].shiftwidth = 2
 			vim.bo[bufnr].tabstop = 2
 		end)

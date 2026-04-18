@@ -1,8 +1,8 @@
-require("lsp"):add_spec({
+require("langs"):add_spec({
 	ft = { "lua" },
 
 	formatters = { "stylua" },
-	mason_auto_install = { "lua-language-server" },
+	mason_auto_install = { "lua-language-server", "stylua" },
 
 	plugins = {
 		{
@@ -17,6 +17,7 @@ require("lsp"):add_spec({
 					{ path = "LazyVim", words = { "LazyVim" } },
 					{ path = "snacks.nvim", words = { "Snacks" } },
 					{ path = "lazy.nvim", words = { "LazyVim" } },
+					{ path = "zpack.nvim", words = { "zpack" } },
 					{ path = "nvim-lspconfig", words = { "lspconfig.settings" } },
 				},
 			},

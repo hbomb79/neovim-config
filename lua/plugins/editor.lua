@@ -1,8 +1,18 @@
 return {
 	{
+		"sairyy/zshow.nvim",
+		opts = {},
+	},
+	{
 		"ThePrimeagen/harpoon",
-		opts = { menu = { width = 120 } },
 		lazy = true,
+		opts = { menu = { width = 120 } },
+	},
+	{
+		"filipdutescu/renamer.nvim",
+		dependencies = { "nvim-lua/plenary.nvim" },
+		lazy = true,
+		opts = { min_width = 40, max_width = 50 },
 	},
 	{
 		"nvim-neo-tree/neo-tree.nvim",
@@ -26,8 +36,27 @@ return {
 	{
 		"smoka7/hop.nvim",
 		opts = { keys = "etovxqpdygfblzhckisuran" },
-		version = "*",
-		lazy = true,
+		sem_version = "*",
+		keys = {
+			{ "<leader>h", nil, desc = "Hop" },
+			{
+				"<leader>hc",
+				"<cmd>lua require('hop').hint_char1 {current_line_only = true}<CR>",
+				desc = "Line Char",
+			},
+			{
+				"<leader>hh",
+				"<cmd>lua require('hop').hint_words {current_line_only = true}<CR>",
+				desc = "Line Word",
+			},
+			{
+				"<leader>hC",
+				"<cmd>lua require('hop').hint_char1 {current_line_only = false}<CR>",
+				desc = "Global Char",
+			},
+			{ "<leader>hH", "<cmd>lua require('hop').hint_words()<CR>", desc = "Global Word" },
+			{ "K", "<cmd>lua vim.lsp.buf.hover()<CR>", desc = "LSP Hover" },
+		},
 	},
 	{
 		"rcarriga/nvim-notify",
@@ -50,25 +79,27 @@ return {
 		dependencies = {
 			"ibhagwan/fzf-lua",
 		},
+		ft = { "qf" },
 	},
 	{
 		"ibhagwan/fzf-lua",
 		dependencies = {
 			"nvim-tree/nvim-web-devicons",
-			{ "junegunn/fzf", build = "./install --bin" },
 		},
-		config = true,
 	},
 	{
 		"kylechui/nvim-surround",
-		version = "*",
-		keys = { "ys", "ds", "cs" },
-		dependencies = { "nvim-treesitter/nvim-treesitter-textobjects" },
-		config = true,
+		dependencies = {
+			"nvim-treesitter/nvim-treesitter-textobjects",
+		},
+		opts = {},
+		sem_version = "^4.0.0",
+		event = "VeryLazy",
 	},
 	{
 		"jake-stewart/multicursor.nvim",
 		branch = "1.0",
+		event = "VeryLazy",
 		config = function()
 			local mc = require("multicursor-nvim")
 			mc.setup()
@@ -101,22 +132,22 @@ return {
 			end
 
 			require("which-key").add({
-				{ "<leader>c", group = "Multi Cursor" },
-				{ "<leader>cc", mc.toggleCursor, desc = "Toggle" },
+				{ "<leader>C", group = "Multi Cursor" },
+				{ "<leader>CC", mc.toggleCursor, desc = "Toggle" },
 				{
-					"<leader>ca",
+					"<leader>Ca",
 					mc.addCursorOperator,
 					desc = "Operator",
 				},
 				{
-					"<leader>ck",
+					"<leader>Ck",
 					function()
 						mc.lineAddCursor(-1)
 					end,
 					desc = "Up",
 				},
 				{
-					"<leader>cj",
+					"<leader>Cj",
 					function()
 						mc.lineAddCursor(1)
 					end,
@@ -124,28 +155,28 @@ return {
 				},
 
 				{
-					"<leader>cn",
+					"<leader>Cn",
 					function()
 						mc.matchAddCursor(1)
 					end,
 					desc = "Match Next",
 				},
 				{
-					"<leader>cN",
+					"<leader>CN",
 					function()
 						mc.matchAddCursor(-1)
 					end,
 					desc = "Match Prev",
 				},
 				{
-					"<leader>cs",
+					"<leader>Cs",
 					function()
 						mc.matchSkipCursor(1)
 					end,
 					desc = "Skip Match Next",
 				},
 				{
-					"<leader>cS",
+					"<leader>CS",
 					function()
 						mc.matchSkipCursor(-1)
 					end,
@@ -153,24 +184,24 @@ return {
 				},
 
 				{
-					"<leader>cr",
+					"<leader>Cr",
 					mc.restoreCursors,
 					desc = "Restore",
 				},
 				{
-					"<leader>c/",
+					"<leader>C/",
 					mc.searchAllAddCursors,
 					desc = "Add at search results",
 				},
 				{
-					"<leader>cd",
+					"<leader>Cd",
 					addCursorEveryDiagnostic,
 					desc = "Diagnostics",
 				},
 			})
 
 			require("which-key").add({
-				{ "<leader>c", mc.addCursorOperator, mode = "v", desc = "Spawn cursors" },
+				{ "<leader>C", mc.addCursorOperator, mode = "v", desc = "Spawn cursors" },
 			})
 			-- Add and remove cursors with control + left click.
 			set("n", "<c-leftmouse>", mc.handleMouse)
@@ -223,15 +254,16 @@ return {
 	},
 	{
 		"stevearc/oil.nvim",
+		cmd = "Oil",
+		dependencies = { { "nvim-mini/mini.icons", opts = {} } },
+
 		---@module 'oil'
 		---@type oil.SetupOpts
 		opts = {},
-		dependencies = { { "nvim-mini/mini.icons", opts = {} } },
-		-- Lazy loading is not recommended because it is very tricky to make it work correctly in all situations.
-		-- lazy = false,
 	},
 	{
 		"petertriho/nvim-scrollbar",
+		event = "VeryLazy",
 		dependencies = {
 			"lewis6991/gitsigns.nvim",
 			{ "kevinhwang91/nvim-hlslens", opts = {} },
@@ -264,7 +296,7 @@ return {
 					search = true,
 				},
 				excluded_filetypes = {
-					"dashboard",
+					"snacks_dashboard",
 				},
 			})
 		end,

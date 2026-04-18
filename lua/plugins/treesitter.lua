@@ -1,25 +1,29 @@
 return {
 	{
 		"nvim-treesitter/nvim-treesitter",
-		dependencies = {
-			{
-				"nvim-treesitter/nvim-treesitter-context",
-				opts = {
-					max_lines = 5,
-					multiline_threshold = 1,
-					trim_scope = "inner",
-				},
-				lazy = false,
-			},
-		},
 		build = ":TSUpdate",
-		lazy = false,
+		event = "VeryLazy",
 	},
 	{
-		"andymass/vim-matchup",
+		"nvim-treesitter/nvim-treesitter-context",
 		dependencies = { "nvim-treesitter/nvim-treesitter" },
-		keys = "%",
+		config = function()
+			require("treesitter-context").setup({
+				max_lines = 5,
+				multiline_threshold = 1,
+				trim_scope = "outer",
+			})
+
+			local colors = require("catppuccin.palettes").get_palette()
+			vim.cmd("hi! TreesitterContext guibg=" .. colors.surface0)
+			vim.cmd("hi! TreesitterContextBottom gui=None")
+		end,
 	},
+	-- {
+	-- 	"andymass/vim-matchup",
+	-- 	dependencies = { "nvim-treesitter/nvim-treesitter" },
+	-- 	keys = "%",
+	-- },
 	-- {
 	-- 	"windwp/nvim-ts-autotag",
 	-- 	dependencies = { "nvim-treesitter/nvim-treesitter" },
@@ -28,6 +32,7 @@ return {
 	{
 		"nvim-treesitter/nvim-treesitter-textobjects",
 		dependencies = { "nvim-treesitter/nvim-treesitter" },
+		event = "VeryLazy",
 		config = function()
 			require("nvim-treesitter-textobjects").setup({
 				textobjects = {

@@ -51,7 +51,7 @@ local default_diagnostics_config = {
 	severity_sort = true,
 }
 
---- Initialises the LSP registry. This includes (but isn't limited to):
+--- Initialises the language registry. This includes (but isn't limited to):
 ---  * Processing and validating all registered languages
 ---  * Creating an autocmd for LSPAttach
 ---  * Configuring global LSP config (signs, diagnostic config)
@@ -352,7 +352,7 @@ function M:set_handler(lspName, handler)
 	self.handlers[lspName] = handler
 end
 
---- Adds a language specification to the LSP registry.
+--- Adds a language specification to the registry.
 ---
 ---@param spec LangSpec
 function M:add_spec(spec)

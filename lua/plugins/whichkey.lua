@@ -72,17 +72,17 @@ return {
 			vim.api.nvim_set_keymap("n", "<Space>", "<NOP>", { noremap = true, silent = true })
 
 			-- Window keybinds
-			vim.keymap.set({ "n", "t" }, "<C-h>", "<cmd>wincmd h<cr>", { noremap = true, silent = true })
-			vim.keymap.set({ "n", "t" }, "<C-j>", "<cmd>wincmd j<cr>", { noremap = true, silent = true })
-			vim.keymap.set({ "n", "t" }, "<C-k>", "<cmd>wincmd k<cr>", { noremap = true, silent = true })
-			vim.keymap.set({ "n", "t" }, "<C-l>", "<cmd>wincmd l<cr>", { noremap = true, silent = true })
-			vim.keymap.set({ "n", "t" }, "<S-Left>", "<cmd>vertical resize -10<CR>", { noremap = true, silent = true })
-			vim.keymap.set({ "n", "t" }, "<S-Right>", "<cmd>vertical resize +10<CR>", { noremap = true, silent = true })
-			vim.keymap.set({ "n", "t" }, "<S-Up>", "<cmd>resize +10<CR>", { noremap = true, silent = true })
-			vim.keymap.set({ "n", "t" }, "<S-Down>", "<cmd>resize -10<CR>", { noremap = true, silent = true })
-			vim.keymap.set({ "n", "t" }, "<S-x>", "<cmd>bdelete<CR>", { noremap = true, silent = true })
+			vim.keymap.set({ "n", "t" }, "<C-h>", "<cmd>wincmd h<cr>")
+			vim.keymap.set({ "n", "t" }, "<C-j>", "<cmd>wincmd j<cr>")
+			vim.keymap.set({ "n", "t" }, "<C-k>", "<cmd>wincmd k<cr>")
+			vim.keymap.set({ "n", "t" }, "<C-l>", "<cmd>wincmd l<cr>")
+			vim.keymap.set({ "n", "t" }, "<S-Left>", "<cmd>vertical resize -10<CR>")
+			vim.keymap.set({ "n", "t" }, "<S-Right>", "<cmd>vertical resize +10<CR>")
+			vim.keymap.set({ "n", "t" }, "<S-Up>", "<cmd>resize +10<CR>")
+			vim.keymap.set({ "n", "t" }, "<S-Down>", "<cmd>resize -10<CR>")
+			vim.keymap.set("n", "<S-x>", "<cmd>bdelete<CR>")
+			vim.keymap.set("t", "<S-x>", "<cmd>bdelete!<CR>")
 
-			-- Continue the above pattern for plugin provided jumps
 			local gs = require("gitsigns")
 			local hunk_move = make_repeatable_move(function(forward)
 				gs.nav_hunk(forward and "next" or "prev")

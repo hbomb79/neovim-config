@@ -85,7 +85,27 @@ return {
 			"stevanmilic/neotest-scala",
 			"akinsho/neotest-go",
 		},
-		lazy = true,
+		keys = {
+			{ "<leader>t", desc = "Neotest" },
+			{
+				"<leader>tF",
+				"<cmd>lua require('neotest').watch.toggle(vim.fn.expand('%'))<CR>",
+				desc = "Toggle file watch",
+			},
+			{
+				"<leader>ta",
+				"<cmd>lua require('neotest').run.attach(require('neotest').run.get_last_run())<CR>",
+				desc = "Attach to tests",
+			},
+			{
+				"<leader>tf",
+				"<cmd>lua require('neotest').run.run(vim.fn.expand('%'))<CR>",
+				desc = "Run file tests",
+			},
+			{ "<leader>to", "<cmd>lua require('neotest').output.open()<CR>", desc = "Test output" },
+			{ "<leader>ts", "<cmd>lua require('neotest').run.run()<CR>", desc = "Run single test" },
+			{ "<leader>tt", "<cmd>lua require('neotest').summary.toggle()<CR>", desc = "Toggle summary" },
+		},
 		config = function()
 			---@diagnostic disable-next-line: missing-fields
 			require("neotest").setup({

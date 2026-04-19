@@ -29,33 +29,6 @@ local function protect_cmd(cmd, err)
 	end
 end
 
---- Opens the Neogit plugin window using a specified working directory, which is
---- found by searching upwards for a .git directory
----
---- This was motivated by some weird behaviour when opening Neogit from
---- a sub-folder in a repo. It would correctly detect the changes,
---- but any attempt to view the diff, stage, unstage or discard would fail
---- because it couldn't find the file.
-local function open_neogit()
-	local git_paths = vim.fs.find(
-		".git",
-		{ upward = true, stop = vim.uv.os_homedir(), path = vim.fs.dirname(vim.api.nvim_buf_get_name(0)) }
-	)
-
-	local git_path
-	if #git_paths > 0 then
-		git_path = vim.fs.dirname(git_paths[1])
-	end
-
-	if git_path == nil then
-		vim.notify("Failed to open Neogit: git repository not found", vim.log.levels.ERROR)
-		return
-	end
-
-	vim.notify("Git repository found to be rooted at '" .. git_path .. "'", vim.log.levels.TRACE)
-	require("neogit").open({ cwd = git_path })
-end
-
 return {
 	{
 		"folke/which-key.nvim",
@@ -69,7 +42,7 @@ return {
 			whichkey.setup({ preset = "helix" })
 
 			-- Set leader
-			vim.api.nvim_set_keymap("n", "<Space>", "<NOP>", { noremap = true, silent = true })
+			vim.keymap.set("n", "<Space>", "<NOP>")
 
 			-- Window keybinds
 			vim.keymap.set({ "n", "t" }, "<C-h>", "<cmd>wincmd h<cr>")
@@ -83,9 +56,8 @@ return {
 			vim.keymap.set("n", "<S-x>", "<cmd>bdelete<CR>")
 			vim.keymap.set("t", "<S-x>", "<cmd>bdelete!<CR>")
 
-			local gs = require("gitsigns")
 			local hunk_move = make_repeatable_move(function(forward)
-				gs.nav_hunk(forward and "next" or "prev")
+				require("gitsigns").nav_hunk(forward and "next" or "prev")
 			end)
 
 			local diag_move = make_repeatable_move(function(forward)
@@ -97,12 +69,9 @@ return {
 			end)
 
 			local harpoon_move = make_repeatable_move(function(forward)
-				if forward then
-					require("harpoon.ui").nav_next()
-				else
-					require("harpoon.ui").nav_prev()
-				end
+				require("harpoon.ui")[forward and "nav_next" or "nav_prev"]()
 			end)
+
 			whichkey.add({
 				-- Repeatable 'next' commands
 				{ "];", quickfix_move.next, desc = "Next Quickfix" },
@@ -121,128 +90,13 @@ return {
 			-- Specific keymaps for LSPs/languages may be set elsewhere (typically
 			-- in an LSPs onattach (see lsp/init.lua)
 			whichkey.add({
-				{ "<leader>;", "<cmd>Dashboard<CR>", desc = "Open Dashboard" },
 				{ "<leader><leader>", "<cmd>nohlsearch<CR>", desc = "Clear Search Highlight" },
-				{ "K", "<cmd>lua vim.lsp.buf.hover({border = 'rounded'})<CR>", desc = "LSP Hover" },
 
-				{ "<leader>E", "<cmd>Neotree reveal<CR>", desc = "Reveal file in Tree" },
-				{ "<leader>e", "<cmd>Neotree last<CR>", desc = "Open File Tree" },
-
-				-- [[ Search (with Telescope) ]] --
-				{ "<leader>s", group = "Search" },
-				{
-					"<leader>sD",
-					"<cmd>Telescope lsp_workspace_diagnostics<CR>",
-					desc = "Workspace Diagnostics",
-				},
-				{ "<leader>sM", "<cmd>Telescope man_pages<CR>", desc = "Man Pages" },
-				{ "<leader>sR", "<cmd>Telescope registers<CR>", desc = "Registers" },
-				{ "<leader>sc", "<cmd>Telescope colorscheme<CR>", desc = "Colorscheme" },
-				{
-					"<leader>sd",
-					"<cmd>Telescope lsp_document_diagnostics<CR>",
-					desc = "Document Diagnostics",
-				},
-				{ "<leader>sf", "<cmd>Telescope find_files<CR>", desc = "Find File" },
-				{ "<leader>f", "<cmd>Telescope find_files<CR>", desc = "Find File" },
-				{ "<leader>sh", "<cmd>Telescope help_tags<CR>", desc = "Help Tag" },
-				{ "<leader>sm", "<cmd>Telescope marks<CR>", desc = "Marks" },
-				{
-					"<leader>sr",
-					"<cmd>Telescope oldfiles<CR>",
-					desc = "Open Recent File",
-				},
-				{ "<leader>st", "<cmd>Telescope live_grep<CR>", desc = "Text" },
-
-				-- [[ Quickfix ]] --
 				{ "<leader>q", group = "Quickfix" },
-				{ "<leader>qn", "<cmd>cnext<CR>", desc = "Next" },
 				{ "<leader>qp", "<cmd>cprevious<CR>", desc = "Previous" },
+				{ "<leader>qn", "<cmd>cnext<CR>", desc = "Next" },
 				{ "<leader>qq", "<cmd>copen<CR>", desc = "Open" },
 				{ "<leader>qx", "<cmd>cclose<CR>", desc = "Close" },
-
-				-- [[ Git ]] --
-				{ "<leader>G", open_neogit, desc = "Neogit" },
-
-				{ "<leader>g", group = "Git" },
-				{ "<leader>gP", "<cmd>Gitsigns preview_hunk<CR>", desc = "Preview Hunk" },
-				{ "<leader>gR", "<cmd>Gitsigns reset_buffer<CR>", desc = "Reset Buffer" },
-				{ "<leader>gb", "<cmd>GitBlameToggle<CR>", desc = "Toggle Blame" },
-				{
-					"<leader>gc",
-					"<cmd>Telescope git_branches<CR>",
-					desc = "Checkout branch",
-				},
-
-				-- [[ Git -> Diff ]] --
-				{ "<leader>gd", desc = "+Diff" },
-				{
-					"<leader>gdH",
-					"<CMD>DiffviewFileHistory<CR>",
-					desc = "Full commit history",
-				},
-				{
-					"<leader>gdd",
-					"<CMD>DiffviewOpen<CR>",
-					desc = "Diff working tree",
-				},
-				{
-					"<leader>gdh",
-					"<CMD>DiffviewFileHistory %<CR>",
-					desc = "File commit history",
-				},
-				{
-					"<leader>gdo",
-					"<CMD>DiffviewOpen origin/HEAD<CR>",
-					desc = "Diff with origin",
-				},
-				{ "<leader>gdx", "<CMD>DiffviewClose<CR>", desc = "Close" },
-
-				-- [[ Git -> Hunk Ops ]] --
-				{
-					"<leader>gp",
-					"<cmd>Gitsigns preview_hunk_inline<CR>",
-					desc = "Preview Hunk Inline",
-				},
-				{ "<leader>gr", "<cmd>Gitsigns reset_hunk<CR>", desc = "Reset Hunk" },
-				{ "<leader>gs", "<cmd>Gitsigns stage_hunk<CR>", desc = "Stage Hunk" },
-				{
-					"<leader>gu",
-					"<cmd>Gitsigns undo_stage_hunk<CR>",
-					desc = "Undo Stage Hunk",
-				},
-
-				-- [[ Harpoon ]] --
-				{ "<leader>p", group = "Harpoon" },
-				{ "<leader>p1", "<cmd> lua require('harpoon.ui').nav_file(1)<CR>", desc = "File 1" },
-				{ "<leader>p2", "<cmd> lua require('harpoon.ui').nav_file(2)<CR>", desc = "File 2" },
-				{ "<leader>p3", "<cmd> lua require('harpoon.ui').nav_file(3)<CR>", desc = "File 3" },
-				{ "<leader>pa", "<cmd>lua require('harpoon.mark').add_file()<CR>", desc = "Add file" },
-				{ "<leader>pm", "<cmd>lua require('harpoon.ui').toggle_quick_menu()<CR>", desc = "Menu" },
-				{ "<leader>pn", "<cmd>lua require('harpoon.ui').nav_next()<CR>", desc = "Next" },
-				{ "<leader>pp", "<cmd>lua require('harpoon.ui').nav_prev()<CR>", desc = "Previous" },
-				{ "<leader>pr", "<cmd>lua require('harpoon.mark').rm_file()<CR>", desc = "Remove file" },
-
-				-- [[ Neotest ]] --
-				{ "<leader>t", group = "Testing" },
-				{
-					"<leader>tF",
-					"<cmd>lua require('neotest').watch.toggle(vim.fn.expand('%'))<CR>",
-					desc = "Toggle file watch",
-				},
-				{
-					"<leader>ta",
-					"<cmd>lua require('neotest').run.attach(require('neotest').run.get_last_run())<CR>",
-					desc = "Attach to tests",
-				},
-				{
-					"<leader>tf",
-					"<cmd>lua require('neotest').run.run(vim.fn.expand('%'))<CR>",
-					desc = "Run file tests",
-				},
-				{ "<leader>to", "<cmd>lua require('neotest').output.open()<CR>", desc = "Test output" },
-				{ "<leader>ts", "<cmd>lua require('neotest').run.run()<CR>", desc = "Run single test" },
-				{ "<leader>tt", "<cmd>lua require('neotest').summary.toggle()<CR>", desc = "Toggle summary" },
 			})
 
 			-- Configure visual-mode leader-based mappings

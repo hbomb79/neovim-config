@@ -5,8 +5,18 @@ return {
 	},
 	{
 		"ThePrimeagen/harpoon",
-		lazy = true,
 		opts = { menu = { width = 120 } },
+		keys = {
+			{ "<leader>p", desc = "Harpoon" },
+			{ "<leader>p1", "<cmd> lua require('harpoon.ui').nav_file(1)<CR>", desc = "File 1" },
+			{ "<leader>p2", "<cmd> lua require('harpoon.ui').nav_file(2)<CR>", desc = "File 2" },
+			{ "<leader>p3", "<cmd> lua require('harpoon.ui').nav_file(3)<CR>", desc = "File 3" },
+			{ "<leader>pa", "<cmd>lua require('harpoon.mark').add_file()<CR>", desc = "Add file" },
+			{ "<leader>pm", "<cmd>lua require('harpoon.ui').toggle_quick_menu()<CR>", desc = "Menu" },
+			{ "<leader>pn", "<cmd>lua require('harpoon.ui').nav_next()<CR>", desc = "Next" },
+			{ "<leader>pp", "<cmd>lua require('harpoon.ui').nav_prev()<CR>", desc = "Previous" },
+			{ "<leader>pr", "<cmd>lua require('harpoon.mark').rm_file()<CR>", desc = "Remove file" },
+		},
 	},
 	{
 		"filipdutescu/renamer.nvim",
@@ -32,6 +42,10 @@ return {
 			"MunifTanjim/nui.nvim",
 		},
 		cmd = "Neotree",
+		keys = {
+			{ "<leader>E", "<cmd>Neotree reveal<CR>", desc = "Reveal file in Tree" },
+			{ "<leader>e", "<cmd>Neotree last<CR>", desc = "Open File Tree" },
+		},
 	},
 	{
 		"smoka7/hop.nvim",

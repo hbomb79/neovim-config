@@ -12,7 +12,6 @@ return {
 			{ "<leader>cC", "<cmd>ClaudeCode --continue<cr>", desc = "Continue Claude" },
 			{ "<leader>cm", "<cmd>ClaudeCodeSelectModel<cr>", desc = "Select Claude model" },
 			{ "<leader>cb", "<cmd>ClaudeCodeAdd %<cr>", desc = "Add current buffer" },
-			{ "<leader>cs", "<cmd>ClaudeCodeSend<cr>", mode = "v", desc = "Send to Claude" },
 			{
 				"<leader>cs",
 				"<cmd>ClaudeCodeTreeAdd<cr>",
@@ -22,6 +21,10 @@ return {
 			-- Diff management
 			{ "<leader>ca", "<cmd>ClaudeCodeDiffAccept<cr>", desc = "Accept diff" },
 			{ "<leader>cd", "<cmd>ClaudeCodeDiffDeny<cr>", desc = "Deny diff" },
+
+			-- Visual mode keymaps
+			{ "<leader>c", nil, mode = "v", desc = "Claude Code" },
+			{ "<leader>cs", "<cmd>ClaudeCodeSend<cr>", mode = "v", desc = "Send to Claude" },
 		},
 	},
 }

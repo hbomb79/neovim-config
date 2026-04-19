@@ -4,6 +4,10 @@ return {
 		opts = {},
 	},
 	{
+		"folke/which-key.nvim",
+		opts = { preset = "helix" },
+	},
+	{
 		"ThePrimeagen/harpoon",
 		opts = { menu = { width = 120 } },
 		keys = {
@@ -93,6 +97,13 @@ return {
 			"ibhagwan/fzf-lua",
 		},
 		ft = { "qf" },
+		keys = {
+			{ "<leader>q", desc = "Quickfix" },
+			{ "<leader>qp", "<cmd>cprevious<CR>", desc = "Previous" },
+			{ "<leader>qn", "<cmd>cnext<CR>", desc = "Next" },
+			{ "<leader>qq", "<cmd>copen<CR>", desc = "Open" },
+			{ "<leader>qx", "<cmd>cclose<CR>", desc = "Close" },
+		},
 	},
 	{
 		"ibhagwan/fzf-lua",

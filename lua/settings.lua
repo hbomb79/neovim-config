@@ -78,6 +78,18 @@ apply(vim.wo, {
 	signcolumn = "yes",
 })
 
+-- Window keybinds
+vim.keymap.set({ "n", "t" }, "<C-h>", "<cmd>wincmd h<cr>")
+vim.keymap.set({ "n", "t" }, "<C-j>", "<cmd>wincmd j<cr>")
+vim.keymap.set({ "n", "t" }, "<C-k>", "<cmd>wincmd k<cr>")
+vim.keymap.set({ "n", "t" }, "<C-l>", "<cmd>wincmd l<cr>")
+vim.keymap.set({ "n", "t" }, "<S-Left>", "<cmd>vertical resize -10<CR>")
+vim.keymap.set({ "n", "t" }, "<S-Right>", "<cmd>vertical resize +10<CR>")
+vim.keymap.set({ "n", "t" }, "<S-Up>", "<cmd>resize +10<CR>")
+vim.keymap.set({ "n", "t" }, "<S-Down>", "<cmd>resize -10<CR>")
+vim.keymap.set("n", "<S-x>", "<cmd>bdelete<CR>")
+vim.keymap.set("t", "<S-x>", "<cmd>bdelete!<CR>")
+
 -- Global options (likely for plugin configuration, which should
 -- be placed in the plugins config function instead).
 apply(vim.g, {
@@ -86,6 +98,5 @@ apply(vim.g, {
 	nvcode_termcolors = 256,
 	gitblame_enabled = 0,
 })
-
--- Disable default LSP mappings as they collide with the custom
--- ones which we define later.
+vim.keymap.set("n", "<Space>", "<NOP>")
+vim.keymap.set("n", "<leader><leader>", "<cmd>nohlsearch<CR>", { desc = "Clear search Highlight" })

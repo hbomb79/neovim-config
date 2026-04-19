@@ -115,6 +115,10 @@ return {
 				desc = "Diff with origin",
 			},
 			{ "<leader>gdx", "<CMD>DiffviewClose<CR>", desc = "Close" },
+
+			-- Visual mode
+			{ "<leader>g", desc = "Git", mode = "v" },
+			{ "<leader>gd", ":DiffviewFileHistory<CR>", desc = "Range Git History", mode = "v" },
 		},
 	},
 }

@@ -123,7 +123,7 @@ return {
 			whichkey.add({
 				{ "<leader>;", "<cmd>Dashboard<CR>", desc = "Open Dashboard" },
 				{ "<leader><leader>", "<cmd>nohlsearch<CR>", desc = "Clear Search Highlight" },
-				-- { "K", "<cmd>lua vim.lsp.buf.hover()<CR>", desc = "LSP Hover" },
+				{ "K", "<cmd>lua vim.lsp.buf.hover({border = 'rounded'})<CR>", desc = "LSP Hover" },
 
 				{ "<leader>E", "<cmd>Neotree reveal<CR>", desc = "Reveal file in Tree" },
 				{ "<leader>e", "<cmd>Neotree last<CR>", desc = "Open File Tree" },

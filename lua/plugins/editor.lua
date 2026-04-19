@@ -55,7 +55,6 @@ return {
 				desc = "Global Char",
 			},
 			{ "<leader>hH", "<cmd>lua require('hop').hint_words()<CR>", desc = "Global Word" },
-			{ "K", "<cmd>lua vim.lsp.buf.hover()<CR>", desc = "LSP Hover" },
 		},
 	},
 	{

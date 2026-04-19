@@ -297,6 +297,7 @@ return {
 				},
 				excluded_filetypes = {
 					"snacks_dashboard",
+					"neo-tree",
 				},
 			})
 		end,

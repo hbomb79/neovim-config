@@ -128,8 +128,6 @@ return {
 			local mc = require("multicursor-nvim")
 			mc.setup()
 
-			local set = vim.keymap.set
-
 			-- Multi-cursor action which adds a cursor at each diagnostic found
 			-- in the current buffer. Clears all existing cursors.
 			local addCursorEveryDiagnostic = function(opts)
@@ -206,7 +204,6 @@ return {
 					end,
 					desc = "Skip Match Prev",
 				},
-
 				{
 					"<leader>Cr",
 					mc.restoreCursors,
@@ -222,15 +219,14 @@ return {
 					addCursorEveryDiagnostic,
 					desc = "Diagnostics",
 				},
-			})
 
-			require("which-key").add({
 				{ "<leader>C", mc.addCursorOperator, mode = "v", desc = "Spawn cursors" },
 			})
+
 			-- Add and remove cursors with control + left click.
-			set("n", "<c-leftmouse>", mc.handleMouse)
-			set("n", "<c-leftdrag>", mc.handleMouseDrag)
-			set("n", "<c-leftrelease>", mc.handleMouseRelease)
+			vim.keymap.set("n", "<c-leftmouse>", mc.handleMouse)
+			vim.keymap.set("n", "<c-leftdrag>", mc.handleMouseDrag)
+			vim.keymap.set("n", "<c-leftrelease>", mc.handleMouseRelease)
 
 			-- Mappings defined in a keymap layer only apply when there are
 			-- multiple cursors. This lets you have overlapping mappings.
@@ -261,19 +257,6 @@ return {
 			hl(0, "MultiCursorDisabledCursor", { reverse = true })
 			hl(0, "MultiCursorDisabledVisual", { link = "Visual" })
 			hl(0, "MultiCursorDisabledSign", { link = "SignColumn" })
-		end,
-	},
-	{
-		"iamcco/markdown-preview.nvim",
-		cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
-		ft = { "markdown" },
-		build = function()
-			vim.fn["mkdp#util#install"]()
-		end,
-		init = function()
-			vim.g.mkdp_filetypes = { "markdown" }
-			vim.g.mkdp_auto_close = 0
-			vim.g.mkdp_theme = "dark"
 		end,
 	},
 	{

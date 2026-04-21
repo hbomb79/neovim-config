@@ -83,7 +83,12 @@ return {
 			-- Language specific testing adapters
 			-- TODO: roll-up in to language registry
 			"stevanmilic/neotest-scala",
-			"akinsho/neotest-go",
+			{
+				"fredrikaverpil/neotest-golang",
+				build = function()
+					vim.system({ "go", "install", "gotest.tools/gotestsum@latest" }):wait()
+				end,
+			},
 		},
 		keys = {
 			{ "<leader>t", desc = "Neotest" },
@@ -110,8 +115,9 @@ return {
 			---@diagnostic disable-next-line: missing-fields
 			require("neotest").setup({
 				adapters = {
-					require("neotest-go")({
-						args = { "-count=1" }, --cache busting
+					require("neotest-golang")({
+						runner = "gotestsum",
+						go_test_args = { "-count=1" }, --cache busting
 					}),
 
 					require("neotest-scala")({

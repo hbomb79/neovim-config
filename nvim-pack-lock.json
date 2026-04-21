@@ -132,6 +132,10 @@
       "rev": "59b50505053f9c45a9febb79e11a56206c3e3901",
       "src": "https://github.com/akinsho/neotest-go"
     },
+    "neotest-golang": {
+      "rev": "48634bebbfa1fe63ed50f170916112c538d8e70d",
+      "src": "https://github.com/fredrikaverpil/neotest-golang"
+    },
     "neotest-scala": {
       "rev": "685f0fac6196862b47025c6b91513af6a406501a",
       "src": "https://github.com/stevanmilic/neotest-scala"

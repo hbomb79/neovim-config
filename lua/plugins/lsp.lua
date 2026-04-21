@@ -78,7 +78,10 @@ return {
 			"nvim-neotest/nvim-nio",
 			"nvim-lua/plenary.nvim",
 			"nvim-treesitter/nvim-treesitter",
-			"antoinemadec/FixCursorHold.nvim",
+
+			-- Should no longer need this plugin, leaving here for now as a breadcrumb
+			-- in case it breaks
+			-- "antoinemadec/FixCursorHold.nvim",
 
 			-- Language specific testing adapters
 			-- TODO: roll-up in to language registry

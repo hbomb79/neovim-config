@@ -50,4 +50,21 @@ require("langs"):add_spec({
 		-- of that issue type was detected in a different file in the same package.
 		table.insert(require("lint").linters["golangcilint"].args, 2, "--max-same-issues=0")
 	end,
+
+	neotest = {
+		dependencies = {
+			{
+				"fredrikaverpil/neotest-golang",
+				build = function()
+					vim.system({ "go", "install", "gotest.tools/gotestsum@latest" }):wait()
+				end,
+			},
+		},
+		adapter = function()
+			return require("neotest-golang")({
+				runner = "gotestsum",
+				go_test_args = { "-count=1" }, --cache busting
+			})
+		end,
+	},
 })

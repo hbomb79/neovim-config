@@ -7,7 +7,6 @@ require("langs"):add_spec({
 	plugins = {
 		{
 			"scalameta/nvim-metals",
-
 			opts = function()
 				local metals_config = require("metals").bare_config()
 				metals_config.settings = {
@@ -95,4 +94,26 @@ require("langs"):add_spec({
 			vim.api.nvim_buf_set_keymap(bufnr, "v", "K", "<cmd>lua require('metals').type_of_range()<CR>", {})
 		end)
 	end,
+
+	neotest = {
+		dependencies = {
+			{ "stevanmilic/neotest-scala" },
+		},
+		adapter = function()
+			return require("neotest-scala")({
+				-- Command line arguments for runner
+				-- Can also be a function to return dynamic values
+				args = { "--no-color" },
+				-- Runner to use. Will use bloop by default.
+				-- Can be a function to return dynamic value.
+				-- For backwards compatibility, it also tries to read the vim-test scala config.
+				-- Possibly values bloop|sbt.
+				runner = "sbt",
+				-- Test framework to use. Will use utest by default.
+				-- Can be a function to return dynamic value.
+				-- Possibly values utest|munit|scalatest.
+				framework = "scalatest",
+			})
+		end,
+	},
 })

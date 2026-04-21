@@ -78,20 +78,11 @@ return {
 			"nvim-neotest/nvim-nio",
 			"nvim-lua/plenary.nvim",
 			"nvim-treesitter/nvim-treesitter",
+			unpack(require("langs"):get_neotest_dependencies()),
 
 			-- Should no longer need this plugin, leaving here for now as a breadcrumb
 			-- in case it breaks
 			-- "antoinemadec/FixCursorHold.nvim",
-
-			-- Language specific testing adapters
-			-- TODO: roll-up in to language registry
-			"stevanmilic/neotest-scala",
-			{
-				"fredrikaverpil/neotest-golang",
-				build = function()
-					vim.system({ "go", "install", "gotest.tools/gotestsum@latest" }):wait()
-				end,
-			},
 		},
 		keys = {
 			{ "<leader>t", desc = "Neotest" },
@@ -117,27 +108,7 @@ return {
 		config = function()
 			---@diagnostic disable-next-line: missing-fields
 			require("neotest").setup({
-				adapters = {
-					require("neotest-golang")({
-						runner = "gotestsum",
-						go_test_args = { "-count=1" }, --cache busting
-					}),
-
-					require("neotest-scala")({
-						-- Command line arguments for runner
-						-- Can also be a function to return dynamic values
-						args = { "--no-color" },
-						-- Runner to use. Will use bloop by default.
-						-- Can be a function to return dynamic value.
-						-- For backwards compatibility, it also tries to read the vim-test scala config.
-						-- Possibly values bloop|sbt.
-						runner = "sbt",
-						-- Test framework to use. Will use utest by default.
-						-- Can be a function to return dynamic value.
-						-- Possibly values utest|munit|scalatest.
-						framework = "scalatest",
-					}),
-				},
+				adapters = require("langs"):get_neotest_adapters(),
 			})
 		end,
 	},

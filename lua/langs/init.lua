@@ -4,6 +4,13 @@ local M = {
 	---@private
 	_did_setup = false,
 
+	---@module "neotest"
+	---
+	---@class NeotestSpec {
+	---@field adapter fun(): neotest.Adapter
+	---@field dependencies zpack.Spec[]
+	---}
+
 	---@class LangSpec {
 	---@field name? string name of the language. If not specified, then the first filetype is used instead
 	---@field ft string[] the filetypes to associate with this language
@@ -13,6 +20,7 @@ local M = {
 	---@field on_load? fun() A function to call the FIRST time a file is opened which matches the languages filetype.
 	---@field mason_auto_install? string[] The Mason LSP(s) to auto-install for this language. Note: formatters are auto-installed using mason-conform, so only LSPs/linters need to be specified here
 	---@field ts_lang? string The Treesitter language to auto-start (or auto-install, if missing) when files matching the filetype(s) specified are opened
+	---@field neotest? NeotestSpec Called when setting up Neotest to retrieve the adapter for this language
 	---}
 
 	---@type LangSpec[]
@@ -381,6 +389,47 @@ function M:add_spec(spec)
 	end
 
 	table.insert(self.specs, spec)
+end
+
+--- Returns the Neotest dependencies (i.e. plugins which provide adapters
+--- for languages) for all the languages registered.
+---
+---@return zpack.Spec[]
+function M:get_neotest_dependencies()
+	local deps = {} ---@type zpack.Spec[]
+
+	for _, spec in pairs(self.specs) do
+		if spec.neotest ~= nil and type(spec.neotest.dependencies) == "table" then
+			for _, dep in pairs(spec.neotest.dependencies) do
+				table.insert(deps, dep)
+			end
+		end
+	end
+
+	return deps
+end
+
+--- Returns the Neotest adapters for all the languages registered
+---
+---@return neotest.Adapter[]
+function M:get_neotest_adapters()
+	local adapters = {} ---@type neotest.Adapter[]
+
+	for _, spec in pairs(self.specs) do
+		if spec.neotest ~= nil and type(spec.neotest.adapter) == "function" then
+			local ok, result = pcall(spec.neotest.adapter)
+			if ok then
+				table.insert(adapters, result)
+			else
+				vim.notify(
+					string.format("Failed to register Neotest adapter for Language %q: %s", spec.name, result),
+					vim.log.levels.ERROR
+				)
+			end
+		end
+	end
+
+	return adapters
 end
 
 --- Uses the registered languages to construct linters for use with nvim-lint.

@@ -273,7 +273,12 @@ end
 ---@private
 function M:set_buffer_keybinds(bufnr)
 	require("which-key").add({
-		{ "K", "<cmd>lua vim.lsp.buf.hover({border = 'rounded'})<CR>", buffer = bufnr, desc = "LSP Hover" },
+		{
+			"K",
+			"<cmd>lua vim.lsp.buf.hover({border = 'rounded', max_width = 130})<CR>",
+			buffer = bufnr,
+			desc = "LSP Hover",
+		},
 
 		-- Standard 'Goto' bindings
 		{ "g", buffer = bufnr, group = "LSP Goto" },

@@ -1,12 +1,18 @@
 return {
+	-- Light overview of plugins installed/loaded via zpack.
 	{
 		"sairyy/zshow.nvim",
 		opts = {},
 	},
+
+	-- Keymap helper. Displays at the bottom right of the screen and shows
+	-- next possible keys.
 	{
 		"folke/which-key.nvim",
 		opts = { preset = "helix" },
 	},
+
+	-- Allows pinning of files for quick switching between them.
 	{
 		"ThePrimeagen/harpoon",
 		opts = { menu = { width = 120 } },
@@ -22,12 +28,17 @@ return {
 			{ "<leader>pr", "<cmd>lua require('harpoon.mark').rm_file()<CR>", desc = "Remove file" },
 		},
 	},
+
+	-- Tweaks the standard LSP rename UX by displaying the prompt AT the
+	-- identifier being renamed, rather than on the cmdline.
 	{
 		"filipdutescu/renamer.nvim",
 		dependencies = { "nvim-lua/plenary.nvim" },
 		lazy = true,
 		opts = { min_width = 40, max_width = 50 },
 	},
+
+	-- File tree
 	{
 		"nvim-neo-tree/neo-tree.nvim",
 		opts = {
@@ -51,6 +62,8 @@ return {
 			{ "<leader>e", "<cmd>Neotree last<CR>", desc = "Open File Tree" },
 		},
 	},
+
+	-- Quick way to hop around lines (with <leader>hh) or around the entire file (with <leader>hH)
 	{
 		"smoka7/hop.nvim",
 		opts = { keys = "etovxqpdygfblzhckisuran" },
@@ -75,6 +88,9 @@ return {
 			{ "<leader>hH", "<cmd>lua require('hop').hint_words()<CR>", desc = "Global Word" },
 		},
 	},
+
+	-- Improve the standard vim notify by showing the messages in the top right
+	-- of the screen.
 	{
 		"rcarriga/nvim-notify",
 		priority = 1000,
@@ -83,6 +99,9 @@ return {
 			vim.notify_once = require("notify")
 		end,
 	},
+
+	-- Allows interaction with the built-in undo tree. This plugin isn't strictly required
+	-- anymore, but it has some nice QoL improvements when compared to the native UI.
 	{
 		"jiaoshijie/undotree",
 		dependencies = "nvim-lua/plenary.nvim",
@@ -91,11 +110,11 @@ return {
 			{ "<leader>u", "<cmd>lua require('undotree').toggle()<cr>", desc = "Undo tree" },
 		},
 	},
+
+	-- Improve the quickfix experience. Most notable is the preview window that appears when cycling
+	-- through items in the list (for example, when looking at LSP references).
 	{
 		"kevinhwang91/nvim-bqf",
-		dependencies = {
-			"ibhagwan/fzf-lua",
-		},
 		ft = { "qf" },
 		keys = {
 			{ "<leader>q", desc = "Quickfix" },
@@ -105,12 +124,9 @@ return {
 			{ "<leader>qx", "<cmd>cclose<CR>", desc = "Close" },
 		},
 	},
-	{
-		"ibhagwan/fzf-lua",
-		dependencies = {
-			"nvim-tree/nvim-web-devicons",
-		},
-	},
+
+	-- Allows adding/changing syntax surrounding words/motions. For example, ysiw< will change `hello`
+	-- to `< hello >`. Or, cs"' will change `"hello"` to `'hello'`.
 	{
 		"kylechui/nvim-surround",
 		dependencies = {
@@ -120,6 +136,8 @@ return {
 		sem_version = "^4.0.0",
 		event = "VeryLazy",
 	},
+
+	-- Provides multi cursor functionality.
 	{
 		"jake-stewart/multicursor.nvim",
 		branch = "1.0",
@@ -259,6 +277,8 @@ return {
 			hl(0, "MultiCursorDisabledSign", { link = "SignColumn" })
 		end,
 	},
+
+	-- Filesystem modification inside of Neovim by yanking/deleting/pasting. Access using :Oil
 	{
 		"stevearc/oil.nvim",
 		cmd = "Oil",
@@ -268,6 +288,9 @@ return {
 		---@type oil.SetupOpts
 		opts = {},
 	},
+
+	-- Subtle scrollbar on the right side of the buffer which shows what is visible, git
+	-- changes, and LSP diagnostics
 	{
 		"petertriho/nvim-scrollbar",
 		event = "VeryLazy",

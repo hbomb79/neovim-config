@@ -40,6 +40,24 @@ return {
 		opts = { hint_enable = false },
 	},
 
+	-- Displays information about a function (e.g. last author, number of references, etc)
+	-- above its definition.
+	{
+		"oribarilan/lensline.nvim",
+		event = "LspAttach",
+		opts = {
+			profiles = {
+				{
+					name = "default",
+					providers = {
+						{ name = "usages", include = { "refs", "defs", "impls" } },
+						{ name = "last_author" },
+					},
+				},
+			},
+		},
+	},
+
 	-- Automatic linting of files on buffer write. Linters to use are provided
 	-- by the language specs (in the 'langs' dir).
 	{

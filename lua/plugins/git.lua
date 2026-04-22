@@ -24,7 +24,10 @@ local function open_neogit()
 	vim.notify("Git repository found to be rooted at '" .. git_path .. "'", vim.log.levels.TRACE)
 	require("neogit").open({ cwd = git_path })
 end
+
 return {
+	-- Displays git hunks (add, removed or changed) in the sign column (next to the
+	-- line numbers). Also exposes some hunk-based operations (like staging, resetting).
 	{
 		"lewis6991/gitsigns.nvim",
 		keys = {
@@ -39,11 +42,16 @@ return {
 			{ "<leader>gu", "<cmd>Gitsigns undo_stage_hunk<CR>", desc = "Undo Stage Hunk" },
 		},
 	},
+
+	-- Exposes the git blame information for the current line. Defaults to being
+	-- disabled, so must be toggled on with the keymap.
 	{
 		"f-person/git-blame.nvim",
 		cmd = "GitBlameToggle",
 		keys = { { "<leader>gb", "<cmd>GitBlameToggle<CR>", desc = "Toggle Blame" } },
 	},
+
+	-- Full Git integration for staging changes, creating commits, pushing/pulling, etc
 	{
 		"NeogitOrg/neogit",
 		branch = "master",
@@ -52,6 +60,8 @@ return {
 			"sindrets/diffview.nvim",
 			"nvim-telescope/telescope.nvim",
 		},
+		cmd = "Neogit",
+		keys = { { "<leader>G", open_neogit, desc = "Neogit" } },
 		config = function()
 			require("neogit").setup({
 				disable_signs = true,
@@ -64,11 +74,10 @@ return {
 				},
 			})
 		end,
-		cmd = "Neogit",
-		keys = {
-			{ "<leader>G", open_neogit, desc = "Neogit" },
-		},
 	},
+
+	-- A Git diff viewer. Useful for merge conflicts, viewing the history of a file, the
+	-- changes versus upstream/origin, etc. Openable using '<leader>gdd'.
 	{
 		"sindrets/diffview.nvim",
 		cmd = { "DiffviewOpen", "DiffviewFileHistory" },

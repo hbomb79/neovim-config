@@ -52,10 +52,6 @@
       "rev": "889e2e96edef4e144965571d46f7a77bcc4d0ddf",
       "src": "https://github.com/j-hui/fidget.nvim"
     },
-    "fzf-lua": {
-      "rev": "fcabe3cb7cfa6bd5148ffac0188997196401937d",
-      "src": "https://github.com/ibhagwan/fzf-lua"
-    },
     "git-blame.nvim": {
       "rev": "5c536e2d4134d064aa3f41575280bc8a2a0e03d7",
       "src": "https://github.com/f-person/git-blame.nvim"
@@ -76,6 +72,10 @@
     "lazydev.nvim": {
       "rev": "ff2cbcba459b637ec3fd165a2be59b7bbaeedf0d",
       "src": "https://github.com/folke/lazydev.nvim"
+    },
+    "lensline.nvim": {
+      "rev": "93c14465c742511a645bb454db33ddd96f23bf76",
+      "src": "https://github.com/oribarilan/lensline.nvim"
     },
     "lsp_signature.nvim": {
       "rev": "a65b38f260cc3470a05b4afb84c8d868617d476d",

@@ -38,6 +38,13 @@ local function enable_gopls()
 		settings = { gopls = config },
 	})
 	vim.lsp.enable("gopls")
+
+	-- Show the codelens virtual text. Without this, using the codelens mapping
+	-- still works, but it's hard to know where to position your cursor when using
+	-- the mapping without this.
+	require("langs"):set_handler("gopls", function(client, _)
+		vim.lsp.codelens.enable(true, { client_id = client.id })
+	end)
 end
 
 -- Register Go LSP. LSP is installed outside of NeoVim/Mason because

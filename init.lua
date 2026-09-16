@@ -40,5 +40,15 @@ end
 -- Load plugins
 require("zpack").setup()
 
+-- Enable experimental NeoVim UI
+require("nvim-treesitter").install("vim"):await(function(err, _)
+	if err then
+		error(err)
+	end
+
+	vim.o.cmdheight = 0
+	require("vim._core.ui2").enable()
+end)
+
 -- Handles auto-updating configuration
 require("confmanager")

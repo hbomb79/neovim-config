@@ -51,7 +51,7 @@ return {
 			-- Auto lint on save
 			vim.api.nvim_create_autocmd({ "BufWinEnter", "BufWritePost" }, {
 				callback = function()
-					local ok, err = pcall(require("lint").try_lint)
+					local ok, err = pcall(require("lint").try_lint, nil, { cwd = vim.fn.expand("%:p:h") })
 					if not ok and err ~= nil then
 						vim.notify("Lint error: " .. vim.inspect(err), vim.log.levels.ERROR)
 					end

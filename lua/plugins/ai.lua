@@ -2,7 +2,11 @@ return {
 	{
 		"coder/claudecode.nvim",
 		dependencies = { "folke/snacks.nvim" },
-		opts = {},
+		opts = {
+			terminal = {
+				provider = "none", -- no UI actions; server + tools remain available
+			},
+		},
 		enabled = vim.fn.executable("claude") == 1,
 		keys = {
 			{ "<leader>c", nil, desc = "Claude Code" },

@@ -1,6 +1,6 @@
 -- Register YAML support. Auto-installs spectral via Mason and disables auto_hover
 require("langs"):add_spec({
-	ft = { "yaml" },
+	ft = { "yaml", "json" },
 	mason_auto_install = { "spectral-language-server" },
 
 	on_load = function()
